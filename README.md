@@ -40,10 +40,10 @@ $ FLASK_APP=app.py python populate_test_database.py
 ## Testing
 
 Some example unit tests are provided in [``tests/``](tests/). They are written
-using the built-in unit-test <https://docs.python.org/3/library/unittest.html>
+using the built-in [unit-test](https://docs.python.org/3/library/unittest.html)
 framework.
 
-We use the nose2 <http://nose2.readthedocs.io/en/latest/> test runner, with
+We use the [nose2](http://nose2.readthedocs.io/en/latest/) test runner, with
 coverage. For example:
 
 ```bash
@@ -97,8 +97,8 @@ Use [Pylint](https://www.pylint.org/) to check your code prior to raising a
 pull request. The parameters below will be used when checking code  cleanliness
 on commits, PRs, and tags, with a target score of >= 9/10.
 
-If you're using Atom as your text editor, consider using the [linter-pylama]
-(https://atom.io/packages/linter-pylama) package for real-time feedback.
+If you're using Atom as your text editor, consider using the [linter-pylama](https://atom.io/packages/linter-pylama)
+package for real-time feedback.
 
 ```bash
 $ pylint --disable=W0622,W0611,F0401,R0914,W0221,W0222,W0142,F0010,W0703,R0911,C0103,R0913 -f parseable zero
@@ -144,11 +144,10 @@ information.
 ## Documentation
 
 Documentation is built with [Sphinx](http://www.sphinx-doc.org/en/stable/rest.html).
-The documentation source files (in [reST markdown]
-(http://www.sphinx-doc.org/en/stable/rest.html)) are in ``docs/source``.
-Everything in that directory **is** under version control. The rendered
-documentation is located in ``docs/build``; those files are **not** under
-version control (per ``.gitignore``).
+The documentation source files (in [reST markdown](http://www.sphinx-doc.org/en/stable/rest.html))
+are in ``docs/source``. Everything in that directory **is** under version
+control. The rendered documentation is located in ``docs/build``; those files
+are **not** under version control (per ``.gitignore``).
 
 To build the full documentation for this project:
 

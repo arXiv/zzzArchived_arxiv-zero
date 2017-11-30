@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cul-it/arxiv-zero.svg?branch=master)](https://travis-ci.org/cul-it/arxiv-zero) [![Coverage Status](https://coveralls.io/repos/github/cul-it/arxiv-zero/badge.svg?branch=master)](https://coveralls.io/github/cul-it/arxiv-zero?branch=master)
+
 # arXiv Zero
 
 This is a sample project for a microservice implemented in Flask, as part of

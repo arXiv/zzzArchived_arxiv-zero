@@ -133,9 +133,9 @@ mypy chokes on dynamic base classes and proxy objects (which you're likely
 to encounter using Flask); it's perfectly fine to disable checking on those
 offending lines using "``# type: ignore``". For example:
 
-.. code-block:: python
-
-   g.baz = get_session(app) # type: ignore
+```python
+>>> g.baz = get_session(app) # type: ignore
+```
 
 
 See `this issue <https://github.com/python/mypy/issues/500>`_ for more
@@ -152,8 +152,8 @@ are **not** under version control (per ``.gitignore``).
 To build the full documentation for this project:
 
 ```bash
-cd <project_root>/docs
-make html
+$ cd <project_root>/docs
+$ make html
 ```
 
 Point your browser to: ``file:///path/to/arxiv-zero/docs/build/html/index.html``.

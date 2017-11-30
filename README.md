@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cul-it/arxiv-zero.svg?branch=master)](https://travis-ci.org/cul-it/arxiv-zero) [![Coverage Status](https://coveralls.io/repos/github/cul-it/arxiv-zero/badge.svg?branch=master)](https://coveralls.io/github/cul-it/arxiv-zero?branch=master)
+[![Build Status](https://travis-ci.org/cul-it/arxiv-zero.svg?branch=master&foo=bar)](https://travis-ci.org/cul-it/arxiv-zero) [![Coverage Status](https://coveralls.io/repos/github/cul-it/arxiv-zero/badge.svg?branch=master)](https://coveralls.io/github/cul-it/arxiv-zero?branch=master)
 
 # arXiv Zero
 

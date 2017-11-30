@@ -1,4 +1,4 @@
-SCORE=$( pylint --disable=W0622,W0611,F0401,R0914,W0221,W0222,W0142,F0010,W0703,R0911,C0103,R0913 -f parseable zero | tail -2 | grep -Eo '[0-9\.]+/10' | tail -1 | sed s/\\/10// )
+SCORE=$( pylint --disable=$PYLINT_IGNORE -f parseable zero | tail -2 | grep -Eo '[0-9\.]+/10' | tail -1 | sed s/\\/10// )
 
 if [ "$TRAVIS_PULL_REQUEST_SHA" = "" ]    # This is not a pull request.
 then

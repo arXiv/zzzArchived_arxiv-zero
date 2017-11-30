@@ -202,7 +202,9 @@ won't need to run sphinx-apidoc unless the structure of the project changes
 
 To rebuild the API docs, run (from the project root):
 
-``sphinx-apidoc -M -f -o docs/source/api/ zero``
+```bash
+$ sphinx-apidoc -M -f -o docs/source/api/ zero
+```
 
 
 ## TODO

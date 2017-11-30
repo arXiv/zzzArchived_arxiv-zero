@@ -8,7 +8,7 @@ python:
 services:
   - docker
 script:
-  - docker build ./ -t arxiv/zero
+  - ./linstats.sh
   - pip install -r requirements/test.txt
   - nose2 --with-coverage
 after_success:

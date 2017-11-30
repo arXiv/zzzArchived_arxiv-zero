@@ -20,7 +20,7 @@ class BazServiceSession(object):
 
     bazcave = 'https://asdf.com'
 
-    def __init__(self, baz_param: str):
+    def __init__(self, baz_param: str) -> None:
         """Create a new HTTP session."""
         self.baz_param = baz_param
         self._session = requests.Session()
@@ -56,6 +56,7 @@ class BazServiceSession(object):
         ------
         IOError
             If there is a problem getting the baz.
+
         """
         logger.debug('Retrieve a baz with id = %i', baz_id)
         response = self._session.get(urljoin(self.bazcave,
@@ -113,12 +114,13 @@ def current_session(app: werkzeug.local.LocalProxy=None) -> BazServiceSession:
     Return
     ------
     :class:`.BazServiceSession`
+
     """
     g = get_application_global()
     if g:
         if 'baz' not in g:
-            g.baz = get_session(app)
-        return g.baz
+            g.baz = get_session(app) # type: ignore
+        return g.baz # type: ignore
     return get_session(app)
 
 
@@ -140,5 +142,6 @@ def retrieve_baz(baz_id: int) -> dict:
     ------
     IOError
         If there is a problem getting the baz.
+
     """
     return current_session().retrieve_baz(baz_id)

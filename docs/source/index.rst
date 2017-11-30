@@ -10,6 +10,7 @@ Welcome to arXiv Zero's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   architecture.rst
    api/modules.rst
 
 

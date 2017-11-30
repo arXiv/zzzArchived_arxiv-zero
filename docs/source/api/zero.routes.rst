@@ -1,6 +1,11 @@
 zero\.routes package
 ====================
 
+.. automodule:: zero.routes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -13,10 +18,3 @@ zero\.routes\.external\_api module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: zero.routes
-    :members:
-    :undoc-members:
-    :show-inheritance:

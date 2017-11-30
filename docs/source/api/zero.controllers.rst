@@ -1,6 +1,11 @@
 zero\.controllers package
 =========================
 
+.. automodule:: zero.controllers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -21,10 +26,3 @@ zero\.controllers\.things module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: zero.controllers
-    :members:
-    :undoc-members:
-    :show-inheritance:

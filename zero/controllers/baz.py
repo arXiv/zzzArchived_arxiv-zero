@@ -1,10 +1,11 @@
 """Handles all baz-related requests."""
 
+from typing import Tuple
 from zero import status
 from zero.services import baz
 
 
-def get_baz(baz_id: int) -> dict:
+def get_baz(baz_id: int) -> Tuple[dict, int, dict]:
     """
     Retrieve a baz from the Baz service.
 

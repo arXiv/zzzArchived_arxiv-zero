@@ -1,10 +1,11 @@
 """Handles all thing-related requests."""
 
+from typing import Tuple
 from zero import status
 from zero.services import things
 
 
-def get_thing(thing_id: int) -> dict:
+def get_thing(thing_id: int) -> Tuple[dict, int, dict]:
     """
     Retrieve a thing from the Things service.
 

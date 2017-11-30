@@ -1,6 +1,11 @@
 zero\.services package
 ======================
 
+.. automodule:: zero.services
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -21,10 +26,3 @@ zero\.services\.things module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: zero.services
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -2,10 +2,10 @@
 
 from flask.json import jsonify
 from flask import Blueprint, render_template, redirect, request, url_for
-from zero import status
+from zero import status, authorization
 from zero.controllers import baz, things
 
-blueprint = Blueprint('zero', __name__, url_prefix='/zero')
+blueprint = Blueprint('external_api', __name__, url_prefix='/zero/api')
 
 
 @blueprint.route('/status', methods=['GET'])
@@ -22,6 +22,7 @@ def read_baz(baz_id: int) -> tuple:
 
 
 @blueprint.route('/thing/<int:thing_id>', methods=['GET'])
+@authorization.scoped('read:thing')
 def read_thing(thing_id: int) -> tuple:
     """Provide some data about the thing."""
     data, status_code, headers = things.get_thing(thing_id)

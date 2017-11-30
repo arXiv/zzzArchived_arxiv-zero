@@ -1,6 +1,11 @@
 zero package
 ============
 
+.. automodule:: zero
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -62,10 +67,3 @@ zero\.status module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: zero
-    :members:
-    :undoc-members:
-    :show-inheritance:

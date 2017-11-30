@@ -102,3 +102,4 @@ ENV/
 
 .coverage
 .DS_Store
+zero.db

@@ -9,7 +9,6 @@ fi
 
 PASS=$(echo $SCORE">="$MIN_SCORE | bc -l)
 if [ $PASS ]
-
 then
     STATE="success"
     echo "pylint passed with score "$SCORE
@@ -19,5 +18,6 @@ else
 fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
-    -d '{"state": "'$STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/pylint"}' \
-    -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA
+    -d '{"state": "'$STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "'$SCORE'/10", "context": "code-quality/pylint"}' \
+    -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
+    > /dev/null 2>&1

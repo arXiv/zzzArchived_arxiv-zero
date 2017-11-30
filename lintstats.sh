@@ -11,10 +11,10 @@ PASS=$(echo $SCORE">="$MIN_SCORE | bc -l)
 if [ $PASS ]
 then
     STATE="success"
-    echo "pylint passed with score "$SCORE
+    echo "pylint passed with score "$SCORE" for sha "$SHA
 else
     STATE="failure"
-    echo "pylint failed with score "$SCORE
+    echo "pylint failed with score "$SCORE" for sha "$SHA
 fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \

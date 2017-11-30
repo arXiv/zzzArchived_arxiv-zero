@@ -9,6 +9,37 @@ A developer working on a new microservice should be able to clone this
 repository and build from there. This should lead to greater consistency
 across microservice projects, and cut down on time spent on project setup.
 
+## Running the development server
+
+Flask provides a single-threaded dev server for your enjoyment.
+
+The entrypoint for this dev server is [``app.py``](app.py) (in the root of the
+project). Flask expects the path to this entrypoint in the environment variable
+``FLASK_APP``. To run the dev server, try (from the project root):
+
+```bash
+$ FLASK_APP=app.py FLASK_DEBUG=1 flask run
+```
+
+``FLASK_DEBUG=1`` enables a slew of lovely development and debugging features.
+For example, the dev server automatically restarts when you make changes to the
+application code.
+
+Note that neither the dev server or the ``app.py`` entrypoint are acceptable
+for use in production.
+
+A convenience script [``populate_test_database.py``](populate_test_database.py)
+is provided to set up an on-disk SQLite database and some sample data. You can
+use this as a starting point for more complex set-up operations (or not). Be
+sure to run this with the ``FLASK_APP`` variable set, e.g.
+
+```bash
+$ FLASK_APP=app.py python populate_test_database.py
+```
+
+## Tests
+
+Some example unit tests are provided in [``tests/``](tests/).
 
 ## Documentation
 

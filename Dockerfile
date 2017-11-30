@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     python3.6 \
     python3.6-dev \
     python3.6-venv \
+    git \
  && rm -rf /var/lib/apt/lists/*
 
 RUN wget https://bootstrap.pypa.io/get-pip.py

@@ -1,15 +1,15 @@
 language: python
-sudo: required
+#sudo: required
 cache: pip
 os:
   - linux
 python:
   - "3.6"
-services:
-  - docker
+#services:
+#  - docker
 script:
-  - docker build ./ -t arxiv/zero
   - pip install -r requirements/test.txt
+  - ./lintstats.sh
   - nose2 --with-coverage
 after_success:
   - coveralls

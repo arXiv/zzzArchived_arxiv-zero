@@ -14,7 +14,7 @@ AWS_REGION = os.environ.get('AWS_REGION', 'us-east-1')
 LOGFILE = os.environ.get('LOGFILE')
 LOGLEVEL = os.environ.get('LOGLEVEL', 20)
 
-SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI',
+SQLALCHEMY_DATABASE_URI = os.environ.get('ZERO_SQLALCHEMY_DATABASE_URI',
                                          'sqlite:///zero.db')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 

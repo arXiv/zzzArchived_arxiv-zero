@@ -138,7 +138,7 @@ offending lines using "``# type: ignore``". For example:
 ```
 
 
-See `this issue <https://github.com/python/mypy/issues/500>`_ for more
+See [this issue](https://github.com/python/mypy/issues/500>) for more
 information.
 
 ## Documentation

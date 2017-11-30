@@ -3,7 +3,7 @@ import json
 from urllib.parse import urlparse, urljoin
 from urllib3 import Retry
 import requests
-import werkzeug
+from werkzeug.local import LocalProxy
 
 from zero.context import get_application_config, get_application_global
 from zero import logging
@@ -75,7 +75,7 @@ class BazServiceSession(object):
         return data
 
 
-def init_app(app: werkzeug.local.LocalProxy=None):
+def init_app(app: LocalProxy = None):
     """
     Set required configuration defaults for the application.
 
@@ -86,7 +86,7 @@ def init_app(app: werkzeug.local.LocalProxy=None):
     app.config.setdefault('BAZ_PARAM', 'baz')
 
 
-def get_session(app: werkzeug.local.LocalProxy=None) -> BazServiceSession:
+def get_session(app: LocalProxy = None) -> BazServiceSession:
     """
     Create a new Baz session.
 
@@ -103,7 +103,7 @@ def get_session(app: werkzeug.local.LocalProxy=None) -> BazServiceSession:
     return BazServiceSession(baz_param)
 
 
-def current_session(app: werkzeug.local.LocalProxy=None) -> BazServiceSession:
+def current_session(app: LocalProxy = None) -> BazServiceSession:
     """
     Get the current Baz session for this context (if there is one).
 
@@ -119,8 +119,8 @@ def current_session(app: werkzeug.local.LocalProxy=None) -> BazServiceSession:
     g = get_application_global()
     if g:
         if 'baz' not in g:
-            g.baz = get_session(app) # type: ignore
-        return g.baz # type: ignore
+            g.baz = get_session(app)  # type: ignore
+        return g.baz  # type: ignore
     return get_session(app)
 
 

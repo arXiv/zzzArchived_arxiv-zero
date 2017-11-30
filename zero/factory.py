@@ -15,7 +15,7 @@ def create_web_app() -> Flask:
     app = Flask('zero')
     app.config.from_pyfile('config.py')
     app.json_encoder = ISO8601JSONEncoder
-    
+
     baz.init_app(app)
     things.init_app(app)
 

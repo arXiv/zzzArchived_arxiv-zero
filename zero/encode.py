@@ -1,5 +1,8 @@
-from flask.json import JSONEncoder
+"""Utilities for response encoding/serialization."""
+
 from datetime import date, datetime
+
+from flask.json import JSONEncoder
 
 
 class ISO8601JSONEncoder(JSONEncoder):
@@ -8,7 +11,7 @@ class ISO8601JSONEncoder(JSONEncoder):
     def default(self, obj):
         """Overriden to render date(time)s in isoformat."""
         try:
-            if type(obj) in [date, datetime]:
+            if isinstance(obj, (date, datetime)):
                 return obj.isoformat()
             iterable = iter(obj)
         except TypeError:

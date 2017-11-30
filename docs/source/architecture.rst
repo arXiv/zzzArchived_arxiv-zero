@@ -106,31 +106,6 @@ Static Files & Templates
 
 Cross-cutting Concepts
 ----------------------
-Testing
-^^^^^^^
-Tests are located in ``tests/``. They are written using the built-in
-`unit-test <https://docs.python.org/3/library/unittest.html>`_ framework.
-
-We use the `nose2 <http://nose2.readthedocs.io/en/latest/>`_ test runner.
-
-For static type checking, use `mypy <http://mypy-lang.org/>`_. E.g.:
-
-.. code-block:: bash
-
-   mypy -p zero --ignore-missing-imports
-
-
-mypy chokes on dynamic base classes and proxy objects (which you're likely
-to encounter using Flask); it's perfectly fine to disable checking on those
-offending lines using "``# type: ignore``". For example:
-
-.. code-block:: python
-
-   g.baz = get_session(app) # type: ignore
-
-
-See `this issue <https://github.com/python/mypy/issues/500>`_ for more
-information.
 
 Schema
 ^^^^^^

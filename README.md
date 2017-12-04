@@ -128,8 +128,11 @@ wherever practicable. Use [mypy](http://mypy-lang.org/) to check your code.
 Try running mypy with (from project root):
 
 ```bash
-$ mypy -p zero --ignore-missing-imports
+$ mypy -p zero
 ```
+
+Mypy options are most easily specified by adding them to `mypy.ini` in the repo's
+root directory.
 
 mypy chokes on dynamic base classes and proxy objects (which you're likely
 to encounter using Flask); it's perfectly fine to disable checking on those

@@ -4,8 +4,10 @@ from typing import Tuple
 from zero import status
 from zero.services import baz
 
+from typing import Optional
 
-def get_baz(baz_id: int) -> Tuple[dict, int, dict]:
+
+def get_baz(baz_id: int) -> Tuple[Optional[dict], int, dict]:
     """
     Retrieve a baz from the Baz service.
 

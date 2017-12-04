@@ -8,6 +8,8 @@ from werkzeug.local import LocalProxy
 from zero.context import get_application_config, get_application_global
 from zero import logging
 
+from typing import Any, Dict, Optional
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,7 +40,7 @@ class BazServiceSession(object):
             return False
         return True
 
-    def retrieve_baz(self, baz_id: int) -> dict:
+    def retrieve_baz(self, baz_id: int) -> Optional[dict]:
         """
         Go get a baz and bring it back.
 
@@ -49,7 +51,7 @@ class BazServiceSession(object):
 
         Return
         ------
-        dict
+        Optional[dict]
             Data about the baz.
 
         Raises
@@ -67,7 +69,7 @@ class BazServiceSession(object):
                 return None
             raise IOError('Could not get baz: %i' % response.status_code)
         try:
-            data = response.json()
+            data: Dict[Any, Any] = response.json()
         except json.decoder.JSONDecodeError as e:
             logger.debug('Baz response could not be decoded')
             raise IOError('Could not read the baz') from e
@@ -75,7 +77,7 @@ class BazServiceSession(object):
         return data
 
 
-def init_app(app: LocalProxy = None):
+def init_app(app: Optional[LocalProxy] = None) -> None:
     """
     Set required configuration defaults for the application.
 
@@ -83,10 +85,11 @@ def init_app(app: LocalProxy = None):
     ----------
     app : :class:`werkzeug.local.LocalProxy`
     """
-    app.config.setdefault('BAZ_PARAM', 'baz')
+    if app is not None:
+        app.config.setdefault('BAZ_PARAM', 'baz')
 
 
-def get_session(app: LocalProxy = None) -> BazServiceSession:
+def get_session(app: Optional[LocalProxy] = None) -> BazServiceSession:
     """
     Create a new Baz session.
 
@@ -103,7 +106,7 @@ def get_session(app: LocalProxy = None) -> BazServiceSession:
     return BazServiceSession(baz_param)
 
 
-def current_session(app: LocalProxy = None) -> BazServiceSession:
+def current_session(app: Optional[LocalProxy] = None) -> BazServiceSession:
     """
     Get the current Baz session for this context (if there is one).
 
@@ -124,7 +127,7 @@ def current_session(app: LocalProxy = None) -> BazServiceSession:
     return get_session(app)
 
 
-def retrieve_baz(baz_id: int) -> dict:
+def retrieve_baz(baz_id: int) -> Optional[dict]:
     """
     Go get a baz and bring it back.
 

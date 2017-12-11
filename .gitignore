@@ -105,7 +105,8 @@ ENV/
 .DS_Store
 zero.db
 
-# Editor files
+# Editor files & misc
 *~
 *.idea
 *.vscode
+default.nix

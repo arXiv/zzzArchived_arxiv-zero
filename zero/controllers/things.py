@@ -3,9 +3,9 @@
 from typing import Tuple
 from zero import status
 from zero.services import things
+from typing import Optional
 
-
-def get_thing(thing_id: int) -> Tuple[dict, int, dict]:
+def get_thing(thing_id: int) -> Tuple[Optional[dict], int, dict]:
     """
     Retrieve a thing from the Things service.
 

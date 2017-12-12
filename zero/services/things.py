@@ -3,12 +3,14 @@
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.exc import OperationalError
 from flask_sqlalchemy import SQLAlchemy, Model
+from flask import Flask
+
+from typing import Optional
+
+db: SQLAlchemy = SQLAlchemy()
 
 
-db = SQLAlchemy()
-
-
-class Thing(db.Model): # type: ignore
+class Thing(db.Model):
     """Model for things."""
 
     __tablename__ = 'things'
@@ -20,12 +22,12 @@ class Thing(db.Model): # type: ignore
     """The datetime when the thing was created."""
 
 
-def init_app(app):
+def init_app(app: Flask) -> None:
     """Set configuration defaults and attach session to the application."""
     db.init_app(app)
 
 
-def get_a_thing(id: int) -> dict:
+def get_a_thing(id: int) -> Optional[dict]:
     """
     Get data about a thing.
 
@@ -36,7 +38,7 @@ def get_a_thing(id: int) -> dict:
 
     Returns
     -------
-    dict
+    Optional[dict]
         Data about the thing.
 
     Raises

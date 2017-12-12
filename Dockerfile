@@ -22,9 +22,10 @@ RUN pip install -U pip && pip install -r /opt/arxiv/requirements.txt
 ENV PATH "/opt/arxiv:${PATH}"
 
 ADD wsgi.py /opt/arxiv/
+ADD uwsgi.ini /opt/arxiv/uwsgi.ini
 ADD zero/ /opt/arxiv/zero/
 
 EXPOSE 8000
 
 WORKDIR /opt/arxiv/
-CMD uwsgi --http-socket :8000 -w wsgi -t 3000 --processes 8 --threads 1 -M --async 100 --ugreen --manage-script-name
+CMD uwsgi --ini uwsgi.ini

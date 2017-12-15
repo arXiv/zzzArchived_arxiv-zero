@@ -59,7 +59,17 @@ class Property(object):
         instance.__dict__[self._name] = value
 
 
-class Baz(object):
+class Data(object):
+    """Base class for data domain classes."""
+
+    def __init__(self, **data: dict) -> None:
+        """Initialize with some data."""
+        for key, value in data.items():
+            if isinstance(getattr(self.__class__, key), Property):
+                setattr(self, key, value)
+
+
+class Baz(Data):
     """Baz est ut mi semper mattis non eget tellus."""
 
     foo = Property('foo', str)
@@ -69,7 +79,7 @@ class Baz(object):
     """A soft boot, traditionally made of reindeer skin or sealskin."""
 
 
-class Thing(object):
+class Thing(Data):
     """
     A thing in itself.
 

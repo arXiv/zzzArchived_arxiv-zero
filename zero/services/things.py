@@ -38,7 +38,7 @@ def get_a_thing(id: int) -> Thing:
 
     Returns
     -------
-    Optional[dict]
+    :class:`.Thing`
         Data about the thing.
 
     Raises
@@ -53,8 +53,38 @@ def get_a_thing(id: int) -> Thing:
         raise IOError('Could not query database: %s' % e.detail) from e
     if thing_data is None:
         return None
-    thing = Thing()
-    thing.id = thing_data.id
-    thing.name = thing_data.name
-    thing.created = thing_data.created
-    return thing
+    return Thing(id=thing_data.id, name=thing_data.name,
+                 created=thing_data.created)
+
+
+def update_a_thing(the_thing: Thing) -> None:
+    """
+    Update the database with the latest :class:`.Thing`.
+
+    Parameters
+    ----------
+    the_thing : :class:`.Thing`
+
+    Raises
+    ------
+    IOError
+        When there is a problem querying the database.
+    RuntimeError
+        When there is some other problem.
+    """
+    if not the_thing.id:
+        raise RuntimeError('The thing has no id!')
+    try:
+        thing_data = db.session.query(DBThing).get(the_thing.id)
+    except OperationalError as e:
+        raise IOError('Could not query database: %s' % e.detail) from e
+    if thing_data is None:
+        raise RuntimeError('Cannot find the thing!')
+
+    thing_data.name = the_thing.name
+    db.session.add(the_thing)
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise RuntimeError('Ack! %s' % e) from e

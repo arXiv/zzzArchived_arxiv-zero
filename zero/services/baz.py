@@ -53,8 +53,7 @@ class BazServiceSession(object):
 
         Return
         ------
-        Optional[dict]
-            Data about the baz.
+        :class:`.Baz`
 
         Raises
         ------

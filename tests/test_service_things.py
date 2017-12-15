@@ -3,6 +3,7 @@
 from unittest import TestCase, mock
 from datetime import datetime
 import sqlalchemy
+from zero.domain import Thing
 
 
 class TestThingGetter(TestCase):
@@ -24,8 +25,8 @@ class TestThingGetter(TestCase):
         self.things.db.create_all()
 
         self.data = dict(name='The first thing', created=datetime.now())
-        self.thing = self.things.Thing(**self.data)
-        self.things.db.session.add(self.thing)
+        self.dbthing = self.things.DBThing(**self.data)
+        self.things.db.session.add(self.dbthing)
         self.things.db.session.commit()
 
     def tearDown(self):
@@ -34,10 +35,12 @@ class TestThingGetter(TestCase):
         self.things.db.drop_all()
 
     def test_get_a_thing_that_exists(self):
-        """When the thing exists, returns data about the thing."""
-        thing_data = self.things.get_a_thing(1)
-        expected = dict(id=1, **self.data)
-        self.assertDictEqual(thing_data, expected)
+        """When the thing exists, returns a :class:`.Thing`."""
+        thing = self.things.get_a_thing(1)
+        self.assertIsInstance(thing, Thing)
+        self.assertEqual(thing.id, 1)
+        self.assertEqual(thing.name, self.data['name'])
+        self.assertEqual(thing.created, self.data['created'])
 
     def test_get_a_thing_that_doesnt_exist(self):
         """When the thing doesn't exist, returns None."""

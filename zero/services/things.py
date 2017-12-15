@@ -3,14 +3,14 @@
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.exc import OperationalError
 from flask_sqlalchemy import SQLAlchemy, Model
-from flask import Flask
 
 from typing import Optional
+from zero.domain import Thing
 
 db: SQLAlchemy = SQLAlchemy()
 
 
-class Thing(db.Model):
+class DBThing(db.Model):
     """Model for things."""
 
     __tablename__ = 'things'
@@ -22,12 +22,12 @@ class Thing(db.Model):
     """The datetime when the thing was created."""
 
 
-def init_app(app: Flask) -> None:
+def init_app(app) -> None:
     """Set configuration defaults and attach session to the application."""
     db.init_app(app)
 
 
-def get_a_thing(id: int) -> Optional[dict]:
+def get_a_thing(id: int) -> Thing:
     """
     Get data about a thing.
 
@@ -48,13 +48,13 @@ def get_a_thing(id: int) -> Optional[dict]:
 
     """
     try:
-        thing = db.session.query(Thing).get(id)
+        thing_data = db.session.query(DBThing).get(id)
     except OperationalError as e:
         raise IOError('Could not query database: %s' % e.detail) from e
-    if thing is None:
+    if thing_data is None:
         return None
-    return {
-        'id': thing.id,
-        'name': thing.name,
-        'created': thing.created
-    }
+    thing = Thing()
+    thing.id = thing_data.id
+    thing.name = thing_data.name
+    thing.created = thing_data.created
+    return thing

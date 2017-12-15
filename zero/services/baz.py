@@ -4,9 +4,11 @@ from urllib.parse import urlparse, urljoin
 from urllib3 import Retry
 import requests
 from werkzeug.local import LocalProxy
+from functools import wraps
 
 from zero.context import get_application_config, get_application_global
 from zero import logging
+from zero.domain import Baz
 
 from typing import Any, Dict, Optional
 
@@ -20,7 +22,7 @@ class BazServiceSession(object):
     This could be an HTTP session, database connection, etc.
     """
 
-    bazcave = 'https://asdf.com'
+    bazcave = 'https://ifconfig.co/json'
 
     def __init__(self, baz_param: str) -> None:
         """Create a new HTTP session."""
@@ -33,14 +35,14 @@ class BazServiceSession(object):
     def status(self) -> bool:
         """Check the availability of the Baz service."""
         try:
-            response = self._session.get(urljoin(self.bazcave, '/health'))
+            response = self._session.head(self.bazcave)
         except requests.exceptions.RequestException:
             return False
         if not response.ok:
             return False
         return True
 
-    def retrieve_baz(self, baz_id: int) -> Optional[dict]:
+    def retrieve_baz(self, baz_id: int) -> Baz:
         """
         Go get a baz and bring it back.
 
@@ -61,20 +63,23 @@ class BazServiceSession(object):
 
         """
         logger.debug('Retrieve a baz with id = %i', baz_id)
-        response = self._session.get(urljoin(self.bazcave,
-                                             '/baz/%i' % baz_id))
+        # It's sad to say, but all baz are really just the same.
+        response = self._session.get(self.bazcave)
         if not response.ok:
             logger.debug('Baz responded with status %i', response.status_code)
             if response.status_code == requests.codes['-o-']:
                 return None
             raise IOError('Could not get baz: %i' % response.status_code)
         try:
-            data: Dict[Any, Any] = response.json()
+            data: Dict[str, Any] = response.json()
         except json.decoder.JSONDecodeError as e:
             logger.debug('Baz response could not be decoded')
             raise IOError('Could not read the baz') from e
         logger.debug('Got a baz with foo: %s', data.get('foo'))
-        return data
+        instance = Baz()
+        instance.foo = data['city']
+        instance.mukluk = data['ip_decimal']
+        return instance
 
 
 def init_app(app: Optional[LocalProxy] = None) -> None:
@@ -127,24 +132,8 @@ def current_session(app: Optional[LocalProxy] = None) -> BazServiceSession:
     return get_session(app)
 
 
+# We don't want to have to maintain two identical docstrings.
+@wraps(BazServiceSession.retrieve_baz)
 def retrieve_baz(baz_id: int) -> Optional[dict]:
-    """
-    Go get a baz and bring it back.
-
-    Parameters
-    ----------
-    baz_id : int
-        The PK id of the baz of interest.
-
-    Return
-    ------
-    dict
-        Data about the baz.
-
-    Raises
-    ------
-    IOError
-        If there is a problem getting the baz.
-
-    """
+    """Wrapper for :meth:`BazServiceSession.retrieve_baz`."""
     return current_session().retrieve_baz(baz_id)

@@ -20,11 +20,10 @@ class TestUIRoutes(TestCase):
         self.app = create_web_app()
         self.client = self.app.test_client()
 
-    @mock.patch('zero.services.baz.retrieve_baz')
-    def test_get_baz(self, mock_retrieve_baz):
+    @mock.patch('zero.controllers.baz.get_baz')
+    def test_get_baz(self, mock_get_baz):
         """Endpoint /zero/ui/baz/<int> returns an HTML page about a Baz."""
-        foo_data = {'id': 1, 'foo': 'bar', 'created': datetime.now()}
-        mock_retrieve_baz.return_value = foo_data
+        mock_get_baz.return_value = {'mukluk': 1, 'foo': 'bar'}, 200, {}
 
         response = self.client.get('/zero/ui/baz/1')
 
@@ -32,11 +31,11 @@ class TestUIRoutes(TestCase):
         self.assertEqual(response.headers['Content-Type'],
                          'text/html; charset=utf-8')
 
-    @mock.patch('zero.services.things.get_a_thing')
-    def test_get_thing(self, mock_get_a_thing):
+    @mock.patch('zero.controllers.things.get_thing')
+    def test_get_thing(self, mock_get_thing):
         """Endpoint /zero/ui/thing/<int> returns HTML page about a Thing."""
         foo_data = {'id': 4, 'name': 'First thing', 'created': datetime.now()}
-        mock_get_a_thing.return_value = foo_data
+        mock_get_thing.return_value = foo_data, 200, {}
 
         token = generate_token(self.app, {'scope': ['read:thing']})
 

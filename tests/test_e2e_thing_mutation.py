@@ -53,8 +53,7 @@ class TestCreateAndMutate(TestCase):
 
         t = threading.Thread(target=run_worker)
         t.daemon = True
-        print(t.start())
-        print(t)
+        t.start()
 
     def tearDown(self):
         """Clear the database and tear down all tables."""

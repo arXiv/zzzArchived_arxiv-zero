@@ -67,3 +67,26 @@ class TestExternalAPIRoutes(TestCase):
             jsonschema.validate(json.loads(response.data), schema)
         except jsonschema.exceptions.SchemaError as e:
             self.fail(e)
+
+    @mock.patch('zero.controllers.things.create_a_thing')
+    def test_create_thing(self, mock_create_a_thing):
+        """POST to endpoint /zero/api/thing creates and stores a Thing."""
+        foo_data = {'name': 'A New Thing'}
+        return_data = {'name': 'A New Thing', 'id': 25,
+                       'created': datetime.now(), 'url': '/zero/api/thing/25'}
+        headers = {'Location': '/zero/api/thing/25'}
+        mock_create_a_thing.return_value = return_data, 201, headers
+        token = generate_token(self.app,
+                               {'scope': ['read:thing', 'write:thing']})
+
+        response = self.client.post('/zero/api/thing',
+                                    data=json.dumps(foo_data),
+                                    headers={'Authorization': token},
+                                    content_type='application/json')
+
+        expected_data = {'id': return_data['id'], 'name': return_data['name'],
+                         'created': return_data['created'].isoformat(),
+                         'url': return_data['url']}
+
+        self.assertEqual(response.status_code, 201, "Created")
+        self.assertDictEqual(json.loads(response.data), expected_data)

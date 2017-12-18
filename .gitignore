@@ -110,3 +110,4 @@ zero.db
 *.idea
 *.vscode
 default.nix
+*.db

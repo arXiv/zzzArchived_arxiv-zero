@@ -12,7 +12,7 @@ class TestBazController(TestCase):
 
     @mock.patch('zero.services.baz.retrieve_baz')
     def test_get_baz(self, mock_retrieve_baz):
-        """:func:`.baz.get_baz` gets a :class:`.Baz` from :mod:`.services.baz`."""
+        """:func:`.baz.get_baz` gets a Baz from the ``baz`` service."""
         mock_retrieve_baz.return_value = Baz(foo='bar', mukluk=1)
 
         response_data, status_code, headers = baz.get_baz(1)
@@ -36,7 +36,7 @@ class TestThingController(TestCase):
 
     @mock.patch('zero.services.things.get_a_thing')
     def test_get_thing(self, mock_get_a_thing):
-        """:func:`.things.get_thing` gets a :class:`.Thing` from :mod:`.services.things`."""
+        """:func:`.things.get_thing` gets a Thing from ``things`` service."""
         created = datetime.now()
         mock_get_a_thing.return_value = Thing(
             id=5,
@@ -46,7 +46,7 @@ class TestThingController(TestCase):
         response_data, status_code, headers = things.get_thing(5)
 
         self.assertDictEqual(response_data,
-                             {'name': 'Thing!', 'created': created})
+                             {'name': 'Thing!', 'created': created, 'id': 5})
         self.assertEqual(status_code, 200)
 
         mock_get_a_thing.return_value = None
@@ -59,3 +59,19 @@ class TestThingController(TestCase):
         mock_get_a_thing.side_effect = IOError
         response_data, status_code, headers = things.get_thing(5)
         self.assertEqual(status_code, 500)
+
+    @mock.patch('zero.services.things.store_a_thing')
+    def test_create_a_thing(self, mock_store_a_thing):
+        """Create a new :class:`.Thing` and store it."""
+        thing_data = {'name': 'a new thing'}
+
+        def _store(a_thing):
+            a_thing.id = 5
+            return a_thing
+        mock_store_a_thing.side_effect = _store
+
+        response_data, status_code, headers = things.create_a_thing(thing_data)
+        self.assertEqual(status_code, 201, "Created")
+        self.assertEqual(response_data['id'], 5)
+        self.assertEqual(response_data['name'], 'a new thing')
+        self.assertIn('Location', headers)

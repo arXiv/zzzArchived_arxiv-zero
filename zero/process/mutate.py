@@ -12,4 +12,4 @@ def add_some_one_to_the_thing(the_thing: Thing) -> None:
     ----------
     the_thing : :class:`.Thing`
     """
-    the_thing.name += "1" * random.randint(0, 10)
+    the_thing.name += "1" * random.randint(1, 10)

@@ -145,7 +145,7 @@ class TestCreateAndMutate(TestCase):
         #    | <---- Return thing data --- |          |
         #    |                                        |
         #    | ----------- Update result -----------> |
-        time.sleep(6)    # Wait for task to complete.
+        time.sleep(12)    # Wait for task to complete.
 
         # Get mutation task status (complete):
         #

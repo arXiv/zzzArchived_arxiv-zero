@@ -3,8 +3,8 @@
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.exc import OperationalError
 from flask_sqlalchemy import SQLAlchemy, Model
-
-from typing import Optional
+from werkzeug.local import LocalProxy
+from typing import Any, Dict, Optional
 from zero.domain import Thing
 
 db: SQLAlchemy = SQLAlchemy()
@@ -22,12 +22,12 @@ class DBThing(db.Model):
     """The datetime when the thing was created."""
 
 
-def init_app(app) -> None:
+def init_app(app: Optional[LocalProxy]) -> None:
     """Set configuration defaults and attach session to the application."""
     db.init_app(app)
 
 
-def get_a_thing(id: int) -> Thing:
+def get_a_thing(id: int) -> Optional[Thing]:
     """
     Get data about a thing.
 

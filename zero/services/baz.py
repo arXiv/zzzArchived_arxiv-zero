@@ -2,15 +2,16 @@
 import json
 from urllib.parse import urlparse, urljoin
 from urllib3 import Retry
+from typing import Any, Dict, Optional
+from functools import wraps
+
 import requests
 from werkzeug.local import LocalProxy
-from functools import wraps
 
 from zero.context import get_application_config, get_application_global
 from zero import logging
 from zero.domain import Baz
 
-from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +43,7 @@ class BazServiceSession(object):
             return False
         return True
 
-    def retrieve_baz(self, baz_id: int) -> Baz:
+    def retrieve_baz(self, baz_id: int) -> Optional[Baz]:
         """
         Go get a baz and bring it back.
 
@@ -133,6 +134,6 @@ def current_session(app: Optional[LocalProxy] = None) -> BazServiceSession:
 
 # We don't want to have to maintain two identical docstrings.
 @wraps(BazServiceSession.retrieve_baz)
-def retrieve_baz(baz_id: int) -> Optional[dict]:
+def retrieve_baz(baz_id: int) -> Optional[Baz]:
     """Wrapper for :meth:`BazServiceSession.retrieve_baz`."""
     return current_session().retrieve_baz(baz_id)

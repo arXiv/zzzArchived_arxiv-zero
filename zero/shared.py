@@ -1,7 +1,8 @@
+from typing import Any
 from flask import url_for as flask_url_for
 
 
-def url_for(endpoint: str, **values) -> str:
+def url_for(endpoint: str, **values: dict) -> Any:
     """
     Build an URL for an ``endpoint``.
 

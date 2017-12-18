@@ -44,7 +44,7 @@ def get_thing(thing_id: int) -> Response:
         Some extra headers to add to the response.
     """
     try:
-        thing: Thing = things.get_a_thing(thing_id)
+        thing: Optional[Thing] = things.get_a_thing(thing_id)
         if thing is None:
             status_code = status.HTTP_404_NOT_FOUND
             response_data = NO_SUCH_THING

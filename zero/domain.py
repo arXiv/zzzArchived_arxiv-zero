@@ -1,20 +1,20 @@
 """Describes the data that will be passed around inside of the service."""
 
 from datetime import datetime
-from typing import Type, Any
+from typing import Type, Any, Optional
 
 
 class Property(object):
     """Describes a named, typed property on a data structure."""
 
-    def __init__(self, name: str, klass: Type = None,
+    def __init__(self, name: str, klass: Optional[Type] = None,
                  default: Any = None) -> None:
         """Set the name, type, and default value for the property."""
         self._name = name
         self.klass = klass
         self.default = default
 
-    def __get__(self, instance: Any, owner: Type = None) -> Any:
+    def __get__(self, instance: Any, owner: Optional[Type] = None) -> Any:
         """
         Retrieve the value of property from the data instance.
 
@@ -37,7 +37,7 @@ class Property(object):
             return instance.__dict__[self._name]
         return self
 
-    def __set__(self, instance: Any, value: Any):
+    def __set__(self, instance: Any, value: Any) -> None:
         """
         Set the value of the property on the data instance.
 
@@ -62,7 +62,7 @@ class Property(object):
 class Data(object):
     """Base class for data domain classes."""
 
-    def __init__(self, **data: dict) -> None:
+    def __init__(self, **data: Any) -> None:
         """Initialize with some data."""
         for key, value in data.items():
             if isinstance(getattr(self.__class__, key), Property):

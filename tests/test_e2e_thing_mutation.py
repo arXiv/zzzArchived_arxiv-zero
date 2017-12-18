@@ -53,7 +53,8 @@ class TestCreateAndMutate(TestCase):
 
         t = threading.Thread(target=run_worker)
         t.daemon = True
-        t.start()
+        print(t.start())
+        print(t)
 
     def tearDown(self):
         """Clear the database and tear down all tables."""
@@ -145,7 +146,7 @@ class TestCreateAndMutate(TestCase):
         #    | <---- Return thing data --- |          |
         #    |                                        |
         #    | ----------- Update result -----------> |
-        time.sleep(12)    # Wait for task to complete.
+        time.sleep(6)    # Wait for task to complete.
 
         # Get mutation task status (complete):
         #

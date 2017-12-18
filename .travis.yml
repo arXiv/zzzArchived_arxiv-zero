@@ -1,12 +1,9 @@
 language: python
-#sudo: required
 cache: pip
 os:
   - linux
 python:
   - "3.6"
-#services:
-#  - docker
 script:
   - pip install -r requirements/test.txt
   - ./lintstats.sh

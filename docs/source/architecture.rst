@@ -85,8 +85,7 @@ beyond this point.
 Controller modules may make thoughtful use of Flask utilities and helpers,
 taking care not to undermine isolation for unit-testing. The Flask ``request``
 proxy object, however, should not be used directly here; interaction with the
-client request is the responsibility of the
-:ref:`routes modules <routes-modules>`.
+client request is the responsibility of the routes modules.
 
 * :mod:`.controllers.baz`
 * :mod:`.controllers.things`
@@ -97,10 +96,10 @@ The data domain modules provide descriptions of the data that will be passed
 around inside of the application. The objects or classes provided by these
 modules provide a shared reference point for the rest of the application. These
 descriptions may be as minimal as a set of `type aliases
-<https://docs.python.org/3/library/typing.html#type-aliases>`_ (see
-:ref:`typing`) built from native Python data types, or as elaborate as a
-hierarchy of classes representing complex data structures. They assist in
-documentation, testing, and static analysis.
+<https://docs.python.org/3/library/typing.html#type-aliases>`_  built from
+native Python data types, or as elaborate as a hierarchy of classes
+representing complex data structures. They assist in documentation, testing,
+and static analysis.
 
 The objects or classes in this module can be imported and used by the
 process, service, and controller modules.
@@ -109,8 +108,7 @@ In contrast to some architectures, we don't assume that these structures relate
 to anything outside of a given service. They are strictly for reasoning about
 data inside of the service. Importantly, these modules **do not** implement
 business logic, nor are they concerned with persistence. Those concerns are
-left to the :ref:`process <process-modules>` and :ref:`service
-<service-modules>` modules.
+left to the process and services modules.
 
 * :mod:`.domain`
 
@@ -119,10 +117,10 @@ Services
 """"""""
 Service modules provide integrations with external services, including
 databases. Each service module is concerned with a single external service, and
-provides an API (generally a set of functions) for use by the  :ref:`controller
-modules <controller-modules>`. The functions or methods exposed by each
-module should accept and return only native Python types and/or data objects
-defined in the data domain module(s).
+provides an API (generally a set of functions) for use by the controller
+modules. The functions or methods exposed by each module should accept and
+return only native Python types and/or data objects defined in the data domain
+module(s).
 
 Modules for integrating with external services and data stores (the Baz service
 and the Thing data store) are provided by :mod:`.services`. Each service module

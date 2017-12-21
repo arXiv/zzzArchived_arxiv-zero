@@ -9,7 +9,6 @@ from typing import Optional
 
 db: SQLAlchemy = SQLAlchemy()
 
-
 class Thing(db.Model):
     """Model for things."""
 

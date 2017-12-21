@@ -43,7 +43,9 @@ $ FLASK_APP=app.py python populate_test_database.py
 
 Some example unit tests are provided in [``tests/``](tests/). They are written
 using the built-in [unit-test](https://docs.python.org/3/library/unittest.html)
-framework.
+framework. **Be sure to change** [``tests/``](tests/tests_mypy.py) to reference
+your python package by change the line `self.pkgname: str = "zero"` to have 
+your package name rather than "zero". 
 
 We use the [nose2](http://nose2.readthedocs.io/en/latest/) test runner, with
 coverage. For example:
@@ -124,6 +126,12 @@ Your code has been rated at 9.49/10 (previous run: 9.41/10, +0.07)
 ## Type hints and static checking
 Use [type hint annotations](https://docs.python.org/3/library/typing.html)
 wherever practicable. Use [mypy](http://mypy-lang.org/) to check your code.
+If you run across typechecking errors in your code and you have a good reason
+for `mypy` to ignore them, you should be able to add `# type: ignore`, 
+ideally along with an actual comment describing why the type checking should be 
+ignored on this line. In cases where it is hoped the types can be specified later,
+just simplying adding the `# type: ignore` without further comment is fine.
+
 
 Try running mypy with (from project root):
 

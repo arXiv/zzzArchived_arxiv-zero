@@ -2,13 +2,16 @@
 
 from unittest import TestCase, mock
 from datetime import datetime
+from zero.services import things
+from zero.services.things import Thing
 import sqlalchemy
 
+from typing import Any
 
 class TestThingGetter(TestCase):
     """The method :meth:`.get_a_thing` retrieves data about things."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Initialize an in-memory SQLite database."""
         from zero.services import things
         self.things = things
@@ -19,35 +22,36 @@ class TestThingGetter(TestCase):
                 'SQLALCHEMY_TRACK_MODIFICATIONS': False
             }, extensions={}, root_path=''
         )
-        self.things.db.init_app(app)
-        self.things.db.app = app
-        self.things.db.create_all()
+        things.db.init_app(app)
+        things.db.app = app
+        things.db.create_all()
 
         self.data = dict(name='The first thing', created=datetime.now())
-        self.thing = self.things.Thing(**self.data)
-        self.things.db.session.add(self.thing)
-        self.things.db.session.commit()
+        self.thing = Thing(**self.data)
+        things.db.session.add(self.thing)
+        things.db.session.commit()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clear the database and tear down all tables."""
-        self.things.db.session.remove()
-        self.things.db.drop_all()
+        things.db.session.remove()
+        things.db.drop_all()
 
-    def test_get_a_thing_that_exists(self):
+    def test_get_a_thing_that_exists(self) -> None:
         """When the thing exists, returns data about the thing."""
-        thing_data = self.things.get_a_thing(1)
+        thing_data = things.get_a_thing(1)
         expected = dict(id=1, **self.data)
-        self.assertDictEqual(thing_data, expected)
+        if thing_data is not None:
+           self.assertDictEqual(thing_data, expected)
 
-    def test_get_a_thing_that_doesnt_exist(self):
+    def test_get_a_thing_that_doesnt_exist(self) -> None:
         """When the thing doesn't exist, returns None."""
-        self.assertIsNone(self.things.get_a_thing(2))
+        self.assertIsNone(things.get_a_thing(2))
 
     @mock.patch('zero.services.things.db.session.query')
-    def test_get_a_thing_when_database_is_unavailable(self, mock_query):
+    def test_get_a_thing_when_database_is_unavailable(self, mock_query: Any) -> None:
         """When the database squawks, raises an IOError."""
-        def raise_op_error(*args, **kwargs):
+        def raise_op_error(*args: str, **kwargs: str) -> None:
             raise sqlalchemy.exc.OperationalError('statement', {}, None)
         mock_query.side_effect = raise_op_error
         with self.assertRaises(IOError):
-            self.things.get_a_thing(1)
+            things.get_a_thing(1)

@@ -2,6 +2,7 @@
 
 from unittest import TestCase, mock
 from datetime import datetime
+from typing import Any
 from zero.domain import Thing
 from zero import tasks
 
@@ -11,7 +12,7 @@ class TestMutateAThing(TestCase):
 
     @mock.patch('zero.tasks.mutate')
     @mock.patch('zero.tasks.things')
-    def test_mutate(self, mock_things, mock_mutate):
+    def test_mutate(self, mock_things: Any, mock_mutate: Any) -> None:
         """A :class:`.Thing` is loaded, mutated, and stored."""
         thing_id = 24
         the_thing = Thing(id=thing_id, name='a thing', created=datetime.now())
@@ -24,7 +25,7 @@ class TestMutateAThing(TestCase):
 
     @mock.patch('zero.tasks.mutate')
     @mock.patch('zero.tasks.things')
-    def test_service_raises_ioerror(self, mock_things, mock_mutate):
+    def test_raises_ioerror(self, mock_things: Any, mock_mutate: Any) -> None:
         """An IOError raised by the service is allowed to propagate."""
         mock_things.get_a_thing.side_effect = IOError
         with self.assertRaises(IOError):
@@ -34,13 +35,13 @@ class TestMutateAThing(TestCase):
 class TestCheckTaskStatus(TestCase):
     """:func:`.check_mutation_status` checks the status of a mutation task."""
 
-    def test_task_id_is_not_a_string(self):
+    def test_task_id_is_not_a_string(self) -> None:
         """A ValueError is raised when ``task_id`` is not a string."""
         with self.assertRaises(ValueError):
-            tasks.check_mutation_status(1)
+            tasks.check_mutation_status(1) # type: ignore
 
     @mock.patch('zero.tasks.AsyncResult')
-    def test_task_result_is_returned_when_successful(self, mock_AsyncResult):
+    def test_result_returned_on_success(self, mock_AsyncResult: Any) -> None:
         """When task succeeds task result is returned."""
         task_id = 'a440s0x0kf0k04s'
         expected_result = 'The Result'
@@ -54,7 +55,7 @@ class TestCheckTaskStatus(TestCase):
         self.assertEqual(status, 'SUCCESS')
 
     @mock.patch('zero.tasks.AsyncResult')
-    def test_task_result_is_returned_when_failed(self, mock_AsyncResult):
+    def test_result_returned_on_fail(self, mock_AsyncResult: Any) -> None:
         """When task fails task result is returned."""
         task_id = 'a440s0x0kf0k04s'
         expected_result = 'The Result'
@@ -68,7 +69,7 @@ class TestCheckTaskStatus(TestCase):
         self.assertEqual(status, 'FAILED')
 
     @mock.patch('zero.tasks.AsyncResult')
-    def test_task_result_is_none_when_pending(self, mock_AsyncResult):
+    def test_result_none_when_pending(self, mock_AsyncResult: Any) -> None:
         """When task is pending task result is None."""
         task_id = 'a440s0x0kf0k04s'
         eventual_result = 'The Result'

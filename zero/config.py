@@ -2,7 +2,7 @@
 
 import os
 
-VERSION = '0.1'
+VERSION = '0.2'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'asdf1234')
 SERVER_NAME = os.environ.get('ZERO_SERVER_NAME')

@@ -9,7 +9,7 @@ from zero.process.mutate import add_some_one_to_the_thing
 class TestMutateThing(TestCase):
     """:func:`.add_some_one_to_the_thing` adds ones to :prop:`.Thing.name`."""
 
-    def test_add_some_one(self):
+    def test_add_some_one(self) -> None:
         """The number of ones varies between 1 and 10."""
         a_thing = Thing(id=5, name='foo', created=datetime.now())
         add_some_one_to_the_thing(a_thing)

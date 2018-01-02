@@ -9,9 +9,9 @@ from urllib import parse
 import threading
 
 
-def generate_token(app: object, claims: dict) -> str:
+def generate_token(app: object, claims: dict) -> bytes:
     """Helper function for generating a JWT."""
-    secret = app.config.get('JWT_SECRET')
+    secret = app.config.get('JWT_SECRET') # type: ignore
     return jwt.encode(claims, secret, algorithm='HS256')
 
 
@@ -23,7 +23,7 @@ class TestCreateAndMutate(TestCase):
     and Redis should be tested separately.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Initialize in-memory queue, on-disk database, and test client."""
         from zero.factory import create_web_app, celery_app
 
@@ -35,9 +35,9 @@ class TestCreateAndMutate(TestCase):
         # Use the ``things`` service as a convenient hook into the DB.
         from zero.services import things
         self.things = things
-        self.things.db.init_app(self.app)
-        self.things.db.app = self.app
-        self.things.db.create_all()
+        self.things.db.init_app(self.app) # type: ignore
+        self.things.db.app = self.app # type: ignore
+        self.things.db.create_all() # type: ignore
 
         # Use an in-memory queue, and an on-disk SQLite DB for results.
         celery_app.conf.broker_url = 'memory://localhost/'
@@ -47,7 +47,7 @@ class TestCreateAndMutate(TestCase):
         celery_app.conf.task_always_eager = False
 
         # Start a worker in a separate thread.
-        def run_worker():
+        def run_worker() -> None:
             """Wrap :func:`Celery.worker_main` for multithreading."""
             celery_app.worker_main()
 
@@ -55,12 +55,12 @@ class TestCreateAndMutate(TestCase):
         t.daemon = True
         t.start()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clear the database and tear down all tables."""
-        self.things.db.session.remove()
-        self.things.db.drop_all()
+        self.things.db.session.remove() # type: ignore
+        self.things.db.drop_all() # type: ignore
 
-    def test_create_a_thing_and_mutate_it(self):
+    def test_create_a_thing_and_mutate_it(self) -> None:
         """Create and mutate a thing via the API."""
         token = generate_token(self.app,
                                {'scope': ['read:thing', 'write:thing']})

@@ -7,12 +7,14 @@ import requests
 from zero.services import baz
 from zero.domain import Baz
 
+from typing import Any, Optional
+
 
 class TestBazServiceStatus(TestCase):
     """The method :meth:`.status` indicates the status of the Baz service."""
 
     @mock.patch('zero.services.baz.requests.Session')
-    def test_status_returns_true_when_remote_is_ok(self, mock_session):
+    def test_status_true_when_remote_is_ok(self, mock_session: Any) -> None:
         """If the remote baz service is OK, :meth:`.status` returns True."""
         mock_get_response = mock.MagicMock(status_code=200, ok=True)
         mock_get = mock.MagicMock(return_value=mock_get_response)
@@ -24,7 +26,7 @@ class TestBazServiceStatus(TestCase):
         self.assertTrue(bazSession.status())
 
     @mock.patch('zero.services.baz.requests.Session')
-    def test_status_returns_false_when_remote_is_not_ok(self, mock_session):
+    def test_status_false_when_remote_not_ok(self, mock_session: Any) -> None:
         """If the remote baz service isn't ok :meth:`.status` returns False."""
         mock_head_response = mock.MagicMock(status_code=503, ok=False)
         mock_head = mock.MagicMock(return_value=mock_head_response)
@@ -36,7 +38,7 @@ class TestBazServiceStatus(TestCase):
         self.assertFalse(bazSession.status())
 
     @mock.patch('zero.services.baz.requests.Session')
-    def test_status_returns_false_when_an_error_occurs(self, mock_session):
+    def test_status_false_when_error_occurs(self, mock_session: Any) -> None:
         """If there is a problem calling baz :meth:`.status` returns False."""
         mock_head = mock.MagicMock(side_effect=requests.exceptions.HTTPError)
         mock_session_instance = mock.MagicMock()
@@ -51,7 +53,7 @@ class TestBazServiceRetrieve(TestCase):
     """The method :meth:`.retrieve_baz` is for getting baz."""
 
     @mock.patch('zero.services.baz.requests.Session')
-    def test_returns_none_when_not_found(self, mock_session):
+    def test_returns_none_when_not_found(self, mock_session: Any) -> None:
         """If there is no such baz, returns None."""
         mock_get_response = mock.MagicMock(status_code=404, ok=False)
         mock_get = mock.MagicMock(return_value=mock_get_response)
@@ -63,7 +65,7 @@ class TestBazServiceRetrieve(TestCase):
         self.assertIsNone(bazSession.retrieve_baz(4))
 
     @mock.patch('zero.services.baz.requests.Session')
-    def test_returns_baz_when_valid_json_returned(self, mock_session):
+    def test_returns_baz_when_valid_json(self, mock_session: Any) -> None:
         """If there is a baz, returns a :class:`.Baz`."""
         mock_json = mock.MagicMock(return_value={
             'city': 'fooville',
@@ -79,11 +81,12 @@ class TestBazServiceRetrieve(TestCase):
         bazSession = baz.BazServiceSession('foo')
         thebaz = bazSession.retrieve_baz(4)
         self.assertIsInstance(thebaz, Baz)
-        self.assertEqual(thebaz.foo, 'fooville')
-        self.assertEqual(thebaz.mukluk, 12346)
+        if isinstance(thebaz, Baz):
+            self.assertEqual(thebaz.foo, 'fooville')
+            self.assertEqual(thebaz.mukluk, 12346)
 
     @mock.patch('zero.services.baz.requests.Session')
-    def test_raises_ioerror_when_status_not_ok(self, mock_session):
+    def test_raise_ioerror_when_status_not_ok(self, mock_session: Any) -> None:
         """If the the baz service returns a bad status, raises IOError."""
         mock_get_response = mock.MagicMock(status_code=500, ok=False)
         mock_get = mock.MagicMock(return_value=mock_get_response)
@@ -96,9 +99,9 @@ class TestBazServiceRetrieve(TestCase):
             bazSession.retrieve_baz(4)
 
     @mock.patch('zero.services.baz.requests.Session')
-    def test_raises_ioerror_when_data_is_bad(self, mock_session):
+    def test_raises_ioerror_when_data_is_bad(self, mock_session: Any) -> None:
         """If the the baz service retrieves non-JSON data, raises IOError."""
-        def raise_decoderror():
+        def raise_decoderror() -> None:
             raise json.decoder.JSONDecodeError('msg', 'doc', 0)
 
         mock_json = mock.MagicMock(side_effect=raise_decoderror)

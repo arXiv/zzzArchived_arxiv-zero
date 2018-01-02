@@ -11,7 +11,7 @@ curl -u $USERNAME:$GITHUB_TOKEN \
     > /dev/null 2>&1
 
 
-mypy -p zero --ignore-missing-imports
+mypy -p zero
 MYPY_STATUS=$?
 if [ $MYPY_STATUS -ne 0 ]; then MYPY_STATE="failure" && echo "mypy failed"; else MYPY_STATE="success" &&  echo "mypy passed"; fi
 

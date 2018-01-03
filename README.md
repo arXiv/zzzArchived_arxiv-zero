@@ -43,7 +43,7 @@ $ FLASK_APP=app.py python populate_test_database.py
 
 Some example unit tests are provided in [``tests/``](tests/). They are written
 using the built-in [unit-test](https://docs.python.org/3/library/unittest.html)
-framework. **Be sure to change** [``tests/``](tests/tests_mypy.py) to reference
+framework. **Be sure to change** [``tests/test_mypy.py``](tests/test_mypy.py) to reference
 your python package by change the line `self.pkgname: str = "zero"` to have 
 your package name rather than "zero". 
 

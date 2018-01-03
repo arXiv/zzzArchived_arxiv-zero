@@ -23,7 +23,7 @@ There are multiple ways to run this server:
     `docker build -t arxiv-zero .`
 3.  `docker run -p 8000:8000 --name container_name arxiv-zero` (add a `-d` flag
     to run in daemon mode)
-3.  Test that the container is working: [http://localhost:8000/zero/api/status]
+3.  Test that the container is working: http://localhost:8000/zero/api/status
 4.  To shut down the container: `docker stop container_name`
 5.  Each time you change a file, you will need to rebuild the Docker image in
     order to import the updated files.
@@ -49,7 +49,7 @@ with `pip`.
 1.  `pip install -r requirements/dev.txt`
 2.  `FLASK_APP=app.py python populate_test_database.py`
 3.  `FLASK_APP=app.py FLASK_DEBUG=1 flask run`
-4.  Test that the app is working: [http://localhost:5000/zero/api/status]
+4.  Test that the app is working: http://localhost:5000/zero/api/status
 
 #### Notes on the development server
 

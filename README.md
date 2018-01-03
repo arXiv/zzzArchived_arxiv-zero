@@ -11,7 +11,47 @@ A developer working on a new microservice should be able to clone this
 repository and build from there. This should lead to greater consistency
 across microservice projects, and cut down on time spent on project setup.
 
-## Running the development server
+## Quick start
+
+There are multiple ways to run this server:
+
+### Docker
+
+1.  Setup [Docker CE using the instructions for your OS](https://docs.docker.com/engine/installation/)
+2.  Build the Docker image, which will execute all the commands in the 
+    [`Dockerfile`](https://github.com/cul-it/arxiv-zero/blob/master/Dockerfile): 
+    `docker build -t arxiv-zero .`
+3.  `docker run -p 8000:8000 --name container_name arxiv-zero` (add a `-d` flag
+    to run in daemon mode)
+3.  Test that the container is working: http://localhost:8000/zero/api/status
+4.  To shut down the container: `docker stop container_name`
+5.  Each time you change a file, you will need to rebuild the Docker image in
+    order to import the updated files.
+
+#### Clean-up
+
+To purge your container run  `docker rmi arxiv-zero`. If you receive the
+following error, run `docker rm CONTAINER_ID` for each stopped container 
+until it clears:
+
+```
+$ docker rmi c196c3ef21c7
+Error response from daemon: conflict: unable to delete c196c3ef21c7 (must be
+forced) - image is being used by stopped container 75bb481b5857
+``` 
+
+### Local Deployment
+
+Sometimes Docker adds more overhead than you want, especially when making quick
+changes. We assume your developer machine already has a version of Python 3.6
+with `pip`.
+
+1.  `pip install -r requirements/dev.txt`
+2.  `FLASK_APP=app.py python populate_test_database.py`
+3.  `FLASK_APP=app.py FLASK_DEBUG=1 flask run`
+4.  Test that the app is working: http://localhost:5000/zero/api/status
+
+#### Notes on the development server
 
 Flask provides a single-threaded dev server for your enjoyment.
 

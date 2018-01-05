@@ -145,8 +145,7 @@ If you're using Atom as your text editor, consider using the [linter-pylama](htt
 package for real-time feedback.
 
 ```bash
-$ pylint --disable=W0622,W0611,F0401,R0914,W0221,W0222,W0142,F0010,W0703,R0911,C0103,R0913 -f parseable zero
-No config file found, using default configuration
+$ pylint zero
 ************* Module zero.context
 zero/context.py:10: [W0212(protected-access), get_application_config] Access to a protected member _Environ of a client class
 ************* Module zero.encode
@@ -161,6 +160,12 @@ zero/services/things.py:49: [E1101(no-member), get_a_thing] Instance of 'scoped_
 
 ------------------------------------------------------------------
 Your code has been rated at 9.49/10 (previous run: 9.41/10, +0.07)
+```
+
+To verify the pylintrc matches the current flags:
+
+```bash
+$ diff .pylintrc <(pylint --disable=W0622,W0611,F0401,R0914,W0221,W0222,W0142,F0010,W0703,R0911,C0102,C0103,R0913 -f parseable --generate-rcfile)
 ```
 
 ## Type hints and static checking

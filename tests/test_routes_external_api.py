@@ -10,6 +10,7 @@ import jwt
 
 from typing import Any, Optional
 
+
 def generate_token(app: Flask, claims: dict) -> str:
     """Helper function for generating a JWT."""
     secret = app.config.get('JWT_SECRET')
@@ -24,19 +25,18 @@ class TestExternalAPIRoutes(TestCase):
         self.app = create_web_app()
         self.client = self.app.test_client()
 
-    @mock.patch('zero.services.baz.retrieve_baz')
-    def test_get_baz(self, mock_retrieve_baz: Any) -> Optional[dict]:
+    @mock.patch('zero.controllers.baz.get_baz')
+    def test_get_baz(self, mock_get_baz: Any) -> None:
         """Endpoint /zero/api/baz/<int> returns JSON about a Baz."""
         with open('schema/baz.json') as f:
             schema = json.load(f)
 
-        foo_data = {'id': 1, 'foo': 'bar', 'created': datetime.now()}
-        mock_retrieve_baz.return_value = foo_data
+        foo_data = {'mukluk': 1, 'foo': 'bar'}
+        mock_get_baz.return_value = foo_data, 200, {}
 
         response = self.client.get('/zero/api/baz/1')
 
-        expected_data = {'id': foo_data['id'], 'foo': foo_data['foo'],
-                         'created': foo_data['created'].isoformat()} #type: ignore
+        expected_data = {'mukluk': foo_data['mukluk'], 'foo': foo_data['foo']}
 
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(json.loads(response.data), expected_data)
@@ -45,24 +45,25 @@ class TestExternalAPIRoutes(TestCase):
             jsonschema.validate(json.loads(response.data), schema)
         except jsonschema.exceptions.SchemaError as e:
             self.fail(e)
-        return foo_data
 
-    @mock.patch('zero.services.things.get_a_thing')
-    def test_get_thing(self, mock_get_a_thing: Any) -> Optional[dict]:
+    @mock.patch('zero.controllers.things.get_thing')
+    def test_get_thing(self, mock_get_thing: Any) -> None:
         """Endpoint /zero/api/thing/<int> returns JSON about a Thing."""
         with open('schema/thing.json') as f:
             schema = json.load(f)
 
         foo_data = {'id': 4, 'name': 'First thing', 'created': datetime.now()}
-        mock_get_a_thing.return_value = foo_data
+        mock_get_thing.return_value = foo_data, 200, {}
 
         token = generate_token(self.app, {'scope': ['read:thing']})
 
         response = self.client.get('/zero/api/thing/4',
                                    headers={'Authorization': token})
 
-        expected_data = {'id': foo_data['id'], 'name': foo_data['name'],
-                         'created': foo_data['created'].isoformat()} #type: ignore
+        expected_data = {
+            'id': foo_data['id'], 'name': foo_data['name'],
+            'created': foo_data['created'].isoformat() # type: ignore
+        }
 
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(json.loads(response.data), expected_data)
@@ -72,4 +73,27 @@ class TestExternalAPIRoutes(TestCase):
         except jsonschema.exceptions.SchemaError as e:
             self.fail(e)
 
-        return foo_data
+    @mock.patch('zero.controllers.things.create_a_thing')
+    def test_create_thing(self, mock_create_a_thing: Any) -> None:
+        """POST to endpoint /zero/api/thing creates and stores a Thing."""
+        foo_data = {'name': 'A New Thing'}
+        return_data = {'name': 'A New Thing', 'id': 25,
+                       'created': datetime.now(), 'url': '/zero/api/thing/25'}
+        headers = {'Location': '/zero/api/thing/25'}
+        mock_create_a_thing.return_value = return_data, 201, headers
+        token = generate_token(self.app,
+                               {'scope': ['read:thing', 'write:thing']})
+
+        response = self.client.post('/zero/api/thing',
+                                    data=json.dumps(foo_data),
+                                    headers={'Authorization': token},
+                                    content_type='application/json')
+
+        expected_data = {
+            'id': return_data['id'], 'name': return_data['name'],
+            'created': return_data['created'].isoformat(), #type: ignore
+            'url': return_data['url']
+        }
+
+        self.assertEqual(response.status_code, 201, "Created")
+        self.assertDictEqual(json.loads(response.data), expected_data)

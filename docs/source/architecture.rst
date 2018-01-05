@@ -72,18 +72,56 @@ to the Flask application upon instantiation.
 
 Controllers
 """""""""""
-Controllers for each of the HTTP routes defined in the :mod:`.routes`
-module are provided by the :mod:`.controllers` module. For the sake of clear
-organization, controllers related to each of the resource types provided by the
-Zero service (baz and thing) are contained in separate submodules. Controllers
-are decoupled from the Flask blueprints defined in :mod:`.routes` in order to
-simplify testing.
+Controller modules are the primary point of control for application execution.
+These modules orchestrate processing in response to request data, utilizing the
+functionality provided by the process and services modules, and generating a
+response.
+
+A controller module exposes an internal API for use by the routes modules. The
+functions that comprise that API should accept and return native Python data
+types. The objects/classes provided by the data domain modules do not escape
+beyond this point.
+
+Controller modules may make thoughtful use of Flask utilities and helpers,
+taking care not to undermine isolation for unit-testing. The Flask ``request``
+proxy object, however, should not be used directly here; interaction with the
+client request is the responsibility of the routes modules.
 
 * :mod:`.controllers.baz`
 * :mod:`.controllers.things`
 
+Data Domain
+"""""""""""
+The data domain modules provide descriptions of the data that will be passed
+around inside of the application. The objects or classes provided by these
+modules provide a shared reference point for the rest of the application. These
+descriptions may be as minimal as a set of `type aliases
+<https://docs.python.org/3/library/typing.html#type-aliases>`_  built from
+native Python data types, or as elaborate as a hierarchy of classes
+representing complex data structures. They assist in documentation, testing,
+and static analysis.
+
+The objects or classes in this module can be imported and used by the
+process, service, and controller modules.
+
+In contrast to some architectures, we don't assume that these structures relate
+to anything outside of a given service. They are strictly for reasoning about
+data inside of the service. Importantly, these modules **do not** implement
+business logic, nor are they concerned with persistence. Those concerns are
+left to the process and services modules.
+
+* :mod:`.domain`
+
+
 Services
 """"""""
+Service modules provide integrations with external services, including
+databases. Each service module is concerned with a single external service, and
+provides an API (generally a set of functions) for use by the controller
+modules. The functions or methods exposed by each module should accept and
+return only native Python types and/or data objects defined in the data domain
+module(s).
+
 Modules for integrating with external services and data stores (the Baz service
 and the Thing data store) are provided by :mod:`.services`. Each service module
 provides a method for preparing the application to use the service (usually a
@@ -94,6 +132,21 @@ of client requests.
 
 * :mod:`.services.baz`
 * :mod:`.services.things`
+
+
+Process Modules
+"""""""""""""""
+Process modules provide data transformation functionality. They encode the
+majority of the  business logic of the application. Each process module exposes
+an internal API, generally a set of functions representing the use-cases
+supported by the module. The functions or methods exposed by each module should
+accept and return only native Python types and/or data objects defined in the
+data domain modules.
+
+To facilitate testing, process modules should generally be framework-agnostic.
+Process modules are imported and used by the controller modules.
+
+* :mod:`.process.mutate`
 
 
 Static Files & Templates

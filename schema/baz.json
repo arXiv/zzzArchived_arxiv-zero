@@ -3,19 +3,13 @@
     "title": "Baz",
     "type": "object",
     "required": [
-        "id",
-        "foo",
-        "created"
+        "mukluk",
+        "foo"
     ],
     "properties": {
-        "id": {
+        "mukluk": {
             "description": "The unique identifier for the baz.",
             "type": "integer"
-        },
-        "created": {
-            "description": "The datetime when the baz was created.",
-            "type": "string",
-            "format": "date-time"
         },
         "foo": {
             "description": "Some additional foo.",

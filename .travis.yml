@@ -1,15 +1,12 @@
 language: python
-#sudo: required
 cache: pip
 os:
   - linux
 python:
   - "3.6"
-#services:
-#  - docker
 script:
   - pip install -r requirements/test.txt
   - ./lintstats.sh
-  - nose2 --with-coverage
+  - nose2
 after_success:
   - coveralls

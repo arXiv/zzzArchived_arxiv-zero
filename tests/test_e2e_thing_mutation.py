@@ -41,8 +41,8 @@ class TestCreateAndMutate(TestCase):
 
         # Use an in-memory queue, and an on-disk SQLite DB for results.
         celery_app.conf.broker_url = 'memory://localhost/'
-        celery_app.conf.result_backend = 'db+sqlite:///results.db'
-        celery_app.conf.database_short_lived_sessions = True
+        os.mkdir('/tmp/results')
+        celery_app.conf.result_backend = 'file:///tmp/results'
         celery_app.conf.worker_prefetch_multiplier = 1
         celery_app.conf.task_acks_late = True
         celery_app.conf.task_always_eager = False

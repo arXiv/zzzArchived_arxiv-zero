@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+uWSGI
+PyJWT
+-e git+git://github.com/cul-it/arxiv-base-ui.git@develop#egg=arxiv-base-ui
+coverage
+mypy
+# -e git+https://github.com/JelleZijlstra/sqlalchemy-stubs.git@master#egg=sqlalchemy-stubs
+nose2
+pylint
+jsonschema

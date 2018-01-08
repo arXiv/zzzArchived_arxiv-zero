@@ -18,15 +18,18 @@ There are multiple ways to run this server:
 ### Docker
 
 1.  Setup [Docker CE using the instructions for your OS](https://docs.docker.com/engine/installation/)
-2.  Build the Docker image, which will execute all the commands in the 
+2.  Build arxiv-base (`cd arxiv-base;  docker build -t arxiv-base:latest .`) if not using a registry.
+3.  Build the Docker image, which will execute all the commands in the 
     [`Dockerfile`](https://github.com/cul-it/arxiv-zero/blob/master/Dockerfile): 
     `docker build -t arxiv-zero .`
-3.  `docker run -p 8000:8000 --name container_name arxiv-zero` (add a `-d` flag
+4.  `docker run -p 8000:8000 --name container_name arxiv-zero` (add a `-d` flag
     to run in daemon mode)
-3.  Test that the container is working: http://localhost:8000/zero/api/status
-4.  To shut down the container: `docker stop container_name`
-5.  Each time you change a file, you will need to rebuild the Docker image in
-    order to import the updated files.
+5.  Test that the container is working: http://localhost:8000/zero/api/status
+6.  To shut down the container: `docker stop container_name`
+7.  Each time you change a file, you will need to rebuild the Docker image in
+    order to import the updated files. Alternatively, volume-mount selected parts
+    of your home directory such has .ssh and .gitconfig in your `docker run` command
+    if you wish to be able to push modifications to github.
 
 #### Clean-up
 

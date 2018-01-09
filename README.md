@@ -19,6 +19,8 @@ There are multiple ways to run this server:
 
 1.  Setup [Docker CE using the instructions for your OS](https://docs.docker.com/engine/installation/)
 2.  Build arxiv-base (`cd arxiv-base;  docker build -t arxiv-base:latest .`) if not using a registry.
+    Also note, if not using a registry, you may need to create the tag manually in some docker
+    installations or versions: `docker tag built_image_id arxiv-base:latest` (seems to be a docker bug).
 3.  Build the Docker image, which will execute all the commands in the 
     [`Dockerfile`](https://github.com/cul-it/arxiv-zero/blob/master/Dockerfile): 
     `docker build -t arxiv-zero .`

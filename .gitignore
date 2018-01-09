@@ -111,3 +111,5 @@ zero.db
 *.vscode
 default.nix
 *.db
+*#*
+*.#*

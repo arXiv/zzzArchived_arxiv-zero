@@ -37,7 +37,7 @@ else DOCKER_RUN_ZERO_STATE="success" &&  echo "docker run zero passed";
 fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
-    -d '{"state": "'$DOCKER_RUN_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_RUN_ID'", "description": "", "context": "code-quality/dockerrunzero"}' \
+    -d '{"state": "'$DOCKER_RUN_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/dockerrunzero"}' \
     -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
     > /dev/null 2>&1
 
@@ -50,7 +50,7 @@ else CURL_TEST_ZERO_STATE="success" &&  echo "curl passed";
 fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
-    -d '{"state": "'$CURL_TEST_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_RUN_ID'", "description": "", "context": "code-quality/curltestzero"}' \
+    -d '{"state": "'$CURL_TEST_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/curltestzero"}' \
     -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
     > /dev/null 2>&1
 

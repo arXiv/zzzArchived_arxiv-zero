@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# The status endpoint will differ based on whether this is a PR or commit.
+if [ "$TRAVIS_PULL_REQUEST_SHA" = "" ];  then SHA=$TRAVIS_COMMIT; else SHA=$TRAVIS_PULL_REQUEST_SHA; fi
+
 # Check that base builds
 docker build -t arxiv-base:latest ./arxiv-base
 DOCKER_BUILD_BASE_STATUS=$?

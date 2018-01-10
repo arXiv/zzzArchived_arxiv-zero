@@ -41,8 +41,8 @@ fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
     -d '{"state": "'$DOCKER_RUN_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/dockerrunzero"}' \
-    -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA
-    #> /dev/null 2>&1
+    -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
+    > /dev/null 2>&1
 
 # Check service is running as expected
 curl http://localhost:8000/zero/api/status | grep "nobody but us"
@@ -54,8 +54,8 @@ fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
     -d '{"state": "'$CURL_TEST_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/curltestzero"}' \
-    -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA
-    #> /dev/null 2>&1
+    -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
+    > /dev/null 2>&1
 
 
 docker rm -f arxiv-zero-test

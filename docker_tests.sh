@@ -12,7 +12,7 @@ else DOCKER_BUILD_BASE_STATE="success" &&  echo "docker build base passed";
 fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
-    -d '{"state": "'$DOCKER_BUILD_BASE_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/dockerbuildbase"}' \
+    -d '{"state": "'$DOCKER_BUILD_BASE_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "docker/buildbase"}' \
     -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
     > /dev/null 2>&1
 
@@ -26,7 +26,7 @@ else DOCKER_BUILD_ZERO_STATE="success" &&  echo "docker build zero passed";
 fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
-    -d '{"state": "'$DOCKER_BUILD_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/dockerbuildzero"}' \
+    -d '{"state": "'$DOCKER_BUILD_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "docker/build"}' \
     -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
     > /dev/null 2>&1
 
@@ -40,7 +40,7 @@ else DOCKER_RUN_ZERO_STATE="success" &&  echo "docker run zero passed";
 fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
-    -d '{"state": "'$DOCKER_RUN_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/dockerrunzero"}' \
+    -d '{"state": "'$DOCKER_RUN_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "docker/run"}' \
     -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
     > /dev/null 2>&1
 
@@ -53,7 +53,7 @@ else CURL_TEST_ZERO_STATE="success" &&  echo "curl passed";
 fi
 
 curl -u $USERNAME:$GITHUB_TOKEN \
-    -d '{"state": "'$CURL_TEST_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/curltestzero"}' \
+    -d '{"state": "'$CURL_TEST_ZERO_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "curl/basic"}' \
     -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
     > /dev/null 2>&1
 

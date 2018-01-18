@@ -1,4 +1,4 @@
-# arxiv/flask base docker file
+# arxiv/base base docker file
 
 FROM centos:centos7
 
@@ -37,4 +37,3 @@ RUN wget https://bootstrap.pypa.io/get-pip.py \
   && python3.6 get-pip.py
 
 CMD /bin/bash
-

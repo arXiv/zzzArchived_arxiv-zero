@@ -10,7 +10,6 @@ python:
 script:
   - pip install -r requirements/test.txt
   - ./lintstats.sh
-  - ./docker_tests.sh
   - nose2
 after_success:
   - coveralls

@@ -1,3 +1,5 @@
+"""Shared functions across arXiv projects."""
+
 from typing import Any
 from flask import url_for as flask_url_for
 

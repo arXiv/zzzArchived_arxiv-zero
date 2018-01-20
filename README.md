@@ -177,7 +177,7 @@ $ diff .pylintrc <(pylint --disable=W0622,W0611,F0401,R0914,W0221,W0222,W0142,F0
 To verify the documentation style, use the tool [PyDocStyle](http://www.pydocstyle.org/en/2.1.1/)
 
 ```bash
-pydocstyle --convention=numpy --count
+pydocstyle --convention=numpy --add-ignore=D401
 ```
 
 ## Type hints and static checking

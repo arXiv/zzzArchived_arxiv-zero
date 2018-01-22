@@ -173,6 +173,13 @@ To verify the pylintrc matches the current flags:
 $ diff .pylintrc <(pylint --disable=W0622,W0611,F0401,R0914,W0221,W0222,W0142,F0010,W0703,R0911,C0102,C0103,R0913 -f parseable --generate-rcfile)
 ```
 
+### Docstyle
+To verify the documentation style, use the tool [PyDocStyle](http://www.pydocstyle.org/en/2.1.1/)
+
+```bash
+pydocstyle --convention=numpy --add-ignore=D401
+```
+
 ## Type hints and static checking
 Use [type hint annotations](https://docs.python.org/3/library/typing.html)
 wherever practicable. Use [mypy](http://mypy-lang.org/) to check your code.
@@ -223,6 +230,8 @@ Point your browser to: ``file:///path/to/arxiv-zero/docs/build/html/index.html``
 
 There are other build targets available. Run ``make`` without any arguments
 for more info.
+
+
 
 ### Architecture
 

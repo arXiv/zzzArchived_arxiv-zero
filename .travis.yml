@@ -8,9 +8,12 @@ os:
 python:
   - "3.6"
 script:
+  - pip install awscli
+  - export PATH=$PATH:$HOME/.local/bin
+  - eval $(aws ecr get-login --no-include-email --region us-east-1)
   - pip install -r requirements/test.txt
   - ./lintstats.sh
-  - ./docker_tests.sh
+  - ./tests/docker_tests.sh
   - nose2
 after_success:
   - coveralls

@@ -1,0 +1,30 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+Flask = "*"
+Flask-SQLAlchemy = "*"
+requests = "*"
+SQLAlchemy = "*"
+uWSGI = "*"
+PyJWT = "*"
+arxiv-base-ui = {git = "git://github.com/cul-it/arxiv-base-ui.git", editable = true, ref = "develop"}
+celery = "*"
+redis = "*"
+
+[dev-packages]
+
+coverage = "*"
+mypy = "*"
+"nose2" = "*"
+pylint = "*"
+
+
+[requires]
+
+python_version = "3.6"

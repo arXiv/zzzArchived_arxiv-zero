@@ -12,8 +12,9 @@ script:
   - export PATH=$PATH:$HOME/.local/bin
   - eval $(aws ecr get-login --no-include-email --region us-east-1)
   - pip install -r requirements/test.txt
+  - pipenv install --dev
   - ./lintstats.sh
   - ./tests/docker_tests.sh
-  - nose2
+  - pipenv run nose2
 after_success:
   - coveralls

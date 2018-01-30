@@ -1,17 +1,23 @@
 # arxiv/zero
 
-FROM 626657773168.dkr.ecr.us-east-1.amazonaws.com/arxiv/base:latest
+# For production:
+#FROM 626657773168.dkr.ecr.us-east-1.amazonaws.com/arxiv/base:latest
 
-ADD requirements/prod.txt /opt/arxiv/requirements.txt
-RUN pip install -U pip && pip install -r /opt/arxiv/requirements.txt
+#For local testing:
+FROM arxiv-base:latest 
+
+WORKDIR /opt/arxiv/
+
+ADD requirements.txt Pipfile Pipfile.lock /opt/arxiv/
+RUN pip install -U pip && \
+  pip install -r /opt/arxiv/requirements.txt && \
+  pipenv install
 
 ENV PATH "/opt/arxiv:${PATH}"
 
-ADD wsgi.py /opt/arxiv/
-ADD uwsgi.ini /opt/arxiv/uwsgi.ini
+ADD wsgi.py uwsgi.ini /opt/arxiv/
 ADD zero/ /opt/arxiv/zero/
 
 EXPOSE 8000
 
-WORKDIR /opt/arxiv/
-CMD uwsgi --ini uwsgi.ini
+CMD pipenv run uwsgi --ini uwsgi.ini

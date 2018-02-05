@@ -7,15 +7,15 @@ name = "pypi"
 
 [packages]
 
+arxiv-base-ui = "*"
+celery = "*"
 Flask = "*"
 Flask-SQLAlchemy = "*"
+PyJWT = "*"
+redis = "*"
 requests = "*"
 SQLAlchemy = "*"
 uWSGI = "*"
-PyJWT = "*"
-arxiv-base-ui = {git = "git://github.com/cul-it/arxiv-base-ui.git", editable = true, ref = "develop"}
-celery = "*"
-redis = "*"
 
 [dev-packages]
 

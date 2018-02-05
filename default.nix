@@ -5,6 +5,11 @@
 # https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/python.md
 #
 
+# with import <nixpkgs> { config = {
+#   packageOverrides = pkgs: {
+#     uwsgi = pkgs.uwsgi.override { xlibs = null; }; # how to make this enable pcre?
+#   };
+# };};
 with import <nixpkgs> {};
 with pkgs.python36Packages;
 stdenv.mkDerivation {
@@ -15,6 +20,7 @@ stdenv.mkDerivation {
     python36Full
     python36Packages.virtualenv
     python36Packages.pip
+    python36Packages.pip-tools
     # the following packages are related to the dependencies of your python
     # project.
     # In this particular example the python modules listed in the
@@ -25,7 +31,8 @@ stdenv.mkDerivation {
     mysql57
     ncurses # needed by uWSGI
     openssl
-    uwsgi
+    pcre
+    (uwsgi.override { plugins = [ "python3" ]; })
     zlib
   ];
   src = null;

@@ -1,20 +1,20 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3b27a2cae92d488d81120e489823c6ad97d0dcca5734f4fe2646c103df16648a"
+            "sha256": "e4f1959bc05ccd2c4029c868c2fb7ca9c2fe341da6e5defec7fdb3a778a32910"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
-            "implementation_version": "3.6.4",
+            "implementation_version": "3.6.1",
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "4.13.0-32-generic",
-            "platform_system": "Linux",
-            "platform_version": "#35~16.04.1-Ubuntu SMP Thu Jan 25 10:13:43 UTC 2018",
-            "python_full_version": "3.6.4",
+            "platform_release": "16.7.0",
+            "platform_system": "Darwin",
+            "platform_version": "Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/RELEASE_X86_64",
+            "python_full_version": "3.6.1",
             "python_version": "3.6",
-            "sys_platform": "linux"
+            "sys_platform": "darwin"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -110,6 +110,13 @@
                 "sha256:f84be1bb0040caca4cea721fcbbbbd61f9be9464ca236387158b0feea01914a4"
             ],
             "version": "==2.10"
+        },
+        "jsonschema": {
+            "hashes": [
+                "sha256:000e68abd33c972a5248544925a0cae7d1125f9bf6c58280d37546b946769a08",
+                "sha256:6ff5f3180870836cae40f06fa10419f557208175f13ad7bc26caa77beb1f6e02"
+            ],
+            "version": "==2.6.0"
         },
         "kombu": {
             "hashes": [
@@ -244,10 +251,11 @@
         },
         "isort": {
             "hashes": [
-                "sha256:4b5f50fa1fe37226cd95acaa723409d6d6b38344e29003191da7c76f11352b51",
-                "sha256:c8756e8058877321a3891939d0c294ad32c8b7cb87a923ebf00f179b33cb1f96"
+                "sha256:75e94757591197eb0afeb1f3b54f6517c1a26fecaeab2b373885739f63de3e66",
+                "sha256:77502c541ad5c40a158932498bf6177bb663d8a2662b50f02a59b906419ba699",
+                "sha256:34929af733faadf884da29d83e7df1884363b3cc647a48e000b3c5cc13d17549"
             ],
-            "version": "==4.3.2"
+            "version": "==4.3.3"
         },
         "lazy-object-proxy": {
             "hashes": [

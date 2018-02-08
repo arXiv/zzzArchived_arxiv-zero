@@ -1,10 +1,9 @@
 # arxiv/zero
 
-# For production:
-FROM 626657773168.dkr.ecr.us-east-1.amazonaws.com/arxiv/base:latest
+FROM arxiv/base:latest
 
 #For local testing:
-# FROM arxiv-base:latest 
+# FROM arxiv-base:latest
 
 WORKDIR /opt/arxiv/
 

@@ -9,13 +9,15 @@ name = "pypi"
 
 arxiv-base = "*"
 celery = "*"
-Flask = "*"
-Flask-SQLAlchemy = "*"
-PyJWT = "*"
+flask = "*"
+flask-sqlalchemy = "*"
+pyjwt = "*"
 redis = "*"
 requests = "*"
-SQLAlchemy = "*"
-uWSGI = "*"
+sqlalchemy = "*"
+uwsgi = "*"
+jsonschema = "*"
+
 
 [dev-packages]
 

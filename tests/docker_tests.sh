@@ -30,6 +30,8 @@ curl -u $USERNAME:$GITHUB_TOKEN \
     -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
     > /dev/null 2>&1
 
+sleep 5s
+
 # Check service is running as expected
 curl http://localhost:8000/zero/api/status | grep "nobody but us"
 CURL_TEST_ZERO_STATUS=$?

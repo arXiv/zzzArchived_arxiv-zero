@@ -10,7 +10,7 @@ python:
 script:
   - pip install pipenv
   - pipenv install --dev
-  - pipenv run ./lintstats.sh
+  - ./lintstats.sh
   - ./tests/docker_tests.sh
   - pipenv run nose2
 after_success:

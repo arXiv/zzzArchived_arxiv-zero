@@ -83,6 +83,7 @@ celerybeat-schedule
 .env
 
 # virtualenv
+requirements.txt
 .venv
 venv/
 ENV/
@@ -103,3 +104,12 @@ ENV/
 .coverage
 .DS_Store
 zero.db
+
+# Editor files & misc
+*~
+*.idea
+*.vscode
+default.nix
+*.db
+*#*
+*.#*

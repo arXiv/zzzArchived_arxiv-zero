@@ -1,15 +1,17 @@
 language: python
-#sudo: required
+sudo: required
+services:
+  - docker
 cache: pip
 os:
   - linux
 python:
   - "3.6"
-#services:
-#  - docker
 script:
-  - pip install -r requirements/test.txt
+  - pip install pipenv
+  - pipenv install --dev
   - ./lintstats.sh
-  - nose2 --with-coverage
+  - ./tests/docker_tests.sh
+  - pipenv run nose2
 after_success:
   - coveralls

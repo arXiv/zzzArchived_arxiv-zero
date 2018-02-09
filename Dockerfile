@@ -1,30 +1,21 @@
 # arxiv/zero
 
-FROM ubuntu:zesty
+FROM arxiv/base:latest
 
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    wget \
-    gcc \
-    g++ \
-    libpython3.6 \
-    python3.6 \
-    python3.6-dev \
-    python3.6-venv \
-    git \
- && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt/arxiv/
 
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python3.6 get-pip.py
-ADD requirements/prod.txt /opt/arxiv/requirements.txt
-RUN pip install -U pip && pip install -r /opt/arxiv/requirements.txt
+RUN yum install -y which
+ADD Pipfile Pipfile.lock /opt/arxiv/
+RUN pip install -U pip pipenv
+ENV LC_ALL en_US.utf-8
+ENV LANG en_US.utf-8
+RUN pipenv install
 
 ENV PATH "/opt/arxiv:${PATH}"
 
-ADD wsgi.py /opt/arxiv/
+ADD wsgi.py uwsgi.ini /opt/arxiv/
 ADD zero/ /opt/arxiv/zero/
 
 EXPOSE 8000
 
-WORKDIR /opt/arxiv/
-CMD uwsgi --http-socket :8000 -w wsgi -t 3000 --processes 8 --threads 1 -M --async 100 --ugreen --manage-script-name
+CMD pipenv run uwsgi --ini uwsgi.ini

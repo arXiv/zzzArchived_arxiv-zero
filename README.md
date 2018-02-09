@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/cul-it/arxiv-zero.svg)](https://travis-ci.org/cul-it/arxiv-zero) [![Coverage Status](https://img.shields.io/coveralls/github/cul-it/arxiv-zero.svg)](https://coveralls.io/github/cul-it/arxiv-zero?branch=master)
+[![Build Status](https://img.shields.io/travis/cul-it/arxiv-zero/master.svg)](https://travis-ci.org/cul-it/arxiv-zero) [![Coverage Status](https://img.shields.io/coveralls/github/cul-it/arxiv-zero/master.svg)](https://coveralls.io/github/cul-it/arxiv-zero?branch=master)
 
 # arXiv Zero
 
@@ -11,7 +11,53 @@ A developer working on a new microservice should be able to clone this
 repository and build from there. This should lead to greater consistency
 across microservice projects, and cut down on time spent on project setup.
 
-## Running the development server
+## Quick start
+
+There are multiple ways to run this server:
+
+### Docker
+
+1.  Setup [Docker CE using the instructions for your OS](https://docs.docker.com/engine/installation/)
+2.  Build [arxiv-base](https://github.com/cul-it/arxiv-base) 
+(clone repo, then `docker build -t arxiv-base:latest .`) if not using a registry.
+    Also note, if not using a registry, you may need to create the tag manually in some docker
+    installations or versions: `docker tag built_image_id arxiv-base:latest` (seems to be a docker bug).
+3.  Build the Docker image, which will execute all the commands in the 
+    [`Dockerfile`](https://github.com/cul-it/arxiv-zero/blob/master/Dockerfile): 
+    `docker build -t arxiv-zero .`
+4.  `docker run -p 8000:8000 --name container_name arxiv-zero` (add a `-d` flag
+    to run in daemon mode)
+5.  Test that the container is working: http://localhost:8000/zero/api/status
+6.  To shut down the container: `docker stop container_name`
+7.  Each time you change a file, you will need to rebuild the Docker image in
+    order to import the updated files. Alternatively, volume-mount selected parts
+    of your home directory such has .ssh and .gitconfig in your `docker run` command
+    if you wish to be able to push modifications to github.
+
+#### Clean-up
+
+To purge your container run  `docker rmi arxiv-zero`. If you receive the
+following error, run `docker rm CONTAINER_ID` for each stopped container 
+until it clears:
+
+```
+$ docker rmi c196c3ef21c7
+Error response from daemon: conflict: unable to delete c196c3ef21c7 (must be
+forced) - image is being used by stopped container 75bb481b5857
+``` 
+
+### Local Deployment
+
+Sometimes Docker adds more overhead than you want, especially when making quick
+changes. We assume your developer machine already has a version of Python 3.6
+with `pip`.
+
+1.  `pip install -r requirements/dev.txt`
+2.  `FLASK_APP=app.py python populate_test_database.py`
+3.  `FLASK_APP=app.py FLASK_DEBUG=1 flask run`
+4.  Test that the app is working: http://localhost:5000/zero/api/status
+
+#### Notes on the development server
 
 Flask provides a single-threaded dev server for your enjoyment.
 
@@ -43,7 +89,9 @@ $ FLASK_APP=app.py python populate_test_database.py
 
 Some example unit tests are provided in [``tests/``](tests/). They are written
 using the built-in [unit-test](https://docs.python.org/3/library/unittest.html)
-framework.
+framework. **Be sure to change** [``tests/test_mypy.py``](tests/test_mypy.py) to reference
+your python package by change the line `self.pkgname: str = "zero"` to have 
+your package name rather than "zero". 
 
 We use the [nose2](http://nose2.readthedocs.io/en/latest/) test runner, with
 coverage. For example:
@@ -103,8 +151,7 @@ If you're using Atom as your text editor, consider using the [linter-pylama](htt
 package for real-time feedback.
 
 ```bash
-$ pylint --disable=W0622,W0611,F0401,R0914,W0221,W0222,W0142,F0010,W0703,R0911,C0103,R0913 -f parseable zero
-No config file found, using default configuration
+$ pylint zero
 ************* Module zero.context
 zero/context.py:10: [W0212(protected-access), get_application_config] Access to a protected member _Environ of a client class
 ************* Module zero.encode
@@ -121,15 +168,37 @@ zero/services/things.py:49: [E1101(no-member), get_a_thing] Instance of 'scoped_
 Your code has been rated at 9.49/10 (previous run: 9.41/10, +0.07)
 ```
 
+To verify the pylintrc matches the current flags:
+
+```bash
+$ diff .pylintrc <(pylint --disable=W0622,W0611,F0401,R0914,W0221,W0222,W0142,F0010,W0703,R0911,C0102,C0103,R0913 -f parseable --generate-rcfile)
+```
+
+### Docstyle
+To verify the documentation style, use the tool [PyDocStyle](http://www.pydocstyle.org/en/2.1.1/)
+
+```bash
+pydocstyle --convention=numpy --add-ignore=D401
+```
+
 ## Type hints and static checking
 Use [type hint annotations](https://docs.python.org/3/library/typing.html)
 wherever practicable. Use [mypy](http://mypy-lang.org/) to check your code.
+If you run across typechecking errors in your code and you have a good reason
+for `mypy` to ignore them, you should be able to add `# type: ignore`, 
+ideally along with an actual comment describing why the type checking should be 
+ignored on this line. In cases where it is hoped the types can be specified later,
+just simplying adding the `# type: ignore` without further comment is fine.
+
 
 Try running mypy with (from project root):
 
 ```bash
-$ mypy -p zero --ignore-missing-imports
+$ mypy -p zero
 ```
+
+Mypy options are most easily specified by adding them to `mypy.ini` in the repo's
+root directory.
 
 mypy chokes on dynamic base classes and proxy objects (which you're likely
 to encounter using Flask); it's perfectly fine to disable checking on those
@@ -140,7 +209,7 @@ offending lines using "``# type: ignore``". For example:
 ```
 
 
-See [this issue](https://github.com/python/mypy/issues/500>) for more
+See [this issue](https://github.com/python/mypy/issues/500) for more
 information.
 
 ## Documentation
@@ -162,6 +231,8 @@ Point your browser to: ``file:///path/to/arxiv-zero/docs/build/html/index.html``
 
 There are other build targets available. Run ``make`` without any arguments
 for more info.
+
+
 
 ### Architecture
 

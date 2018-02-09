@@ -13,9 +13,9 @@ app.app_context().push()
 def populate_database():
     """Initialize the search index."""
     things.db.create_all()
-    things.db.session.add(things.Thing(name='The first thing', created=datetime.now()))
-    things.db.session.add(things.Thing(name='The second thing', created=datetime.now()))
-    things.db.session.add(things.Thing(name='The third thing', created=datetime.now()))
+    things.db.session.add(things.DBThing(name='The first thing', created=datetime.now()))
+    things.db.session.add(things.DBThing(name='The second thing', created=datetime.now()))
+    things.db.session.add(things.DBThing(name='The third thing', created=datetime.now()))
     things.db.session.commit()
 
 

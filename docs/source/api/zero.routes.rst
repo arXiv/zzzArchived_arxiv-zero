@@ -17,4 +17,12 @@ zero\.routes\.external\_api module
     :undoc-members:
     :show-inheritance:
 
+zero\.routes\.ui module
+-----------------------
+
+.. automodule:: zero.routes.ui
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 

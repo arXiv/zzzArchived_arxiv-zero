@@ -52,10 +52,11 @@ Sometimes Docker adds more overhead than you want, especially when making quick
 changes. We assume your developer machine already has a version of Python 3.6
 with `pip`.
 
-1.  `pip install -r requirements/dev.txt`
-2.  `FLASK_APP=app.py python populate_test_database.py`
-3.  `FLASK_APP=app.py FLASK_DEBUG=1 flask run`
-4.  Test that the app is working: http://localhost:5000/zero/api/status
+1.  `pip install pipenv && pipenv install --dev`
+2.  `pip-env shell` 
+3.  `FLASK_APP=app.py python populate_test_database.py`
+4.  `FLASK_APP=app.py FLASK_DEBUG=1 flask run`
+5.  Test that the app is working: http://localhost:5000/zero/api/status
 
 #### Notes on the development server
 

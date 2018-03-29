@@ -28,9 +28,9 @@ class TestThingGetter(TestCase):
         things.db.create_all()
 
         self.data = dict(name='The first thing', created=datetime.now())
-        self.dbthing = self.things.DBThing(**self.data) # type: ignore
-        self.things.db.session.add(self.dbthing) # type: ignore
-        self.things.db.session.commit() # type: ignore
+        self.dbthing = self.things.DBThing(**self.data)     # type: ignore
+        self.things.db.session.add(self.dbthing)    # type: ignore
+        self.things.db.session.commit()     # type: ignore
 
     def tearDown(self) -> None:
         """Clear the database and tear down all tables."""
@@ -39,7 +39,7 @@ class TestThingGetter(TestCase):
 
     def test_get_a_thing_that_exists(self) -> None:
         """When the thing exists, returns a :class:`.Thing`."""
-        thing = self.things.get_a_thing(1) # type: ignore
+        thing = self.things.get_a_thing(1)  # type: ignore
         self.assertIsInstance(thing, Thing)
         self.assertEqual(thing.id, 1)
         self.assertEqual(thing.name, self.data['name'])
@@ -56,7 +56,7 @@ class TestThingGetter(TestCase):
             raise sqlalchemy.exc.OperationalError('statement', {}, None)
         mock_query.side_effect = raise_op_error
         with self.assertRaises(IOError):
-            self.things.get_a_thing(1) # type: ignore
+            self.things.get_a_thing(1)  # type: ignore
 
 
 class TestThingCreator(TestCase):
@@ -73,28 +73,30 @@ class TestThingCreator(TestCase):
                 'SQLALCHEMY_TRACK_MODIFICATIONS': False
             }, extensions={}, root_path=''
         )
-        self.things.db.init_app(app) # type: ignore
-        self.things.db.app = app # type: ignore
-        self.things.db.create_all() # type: ignore
+        self.things.db.init_app(app)    # type: ignore
+        self.things.db.app = app    # type: ignore
+        self.things.db.create_all()  # type: ignore
 
         self.data = dict(name='The first thing', created=datetime.now())
-        self.dbthing = self.things.DBThing(**self.data) # type: ignore
-        self.things.db.session.add(self.dbthing) # type: ignore
-        self.things.db.session.commit() # type: ignore
+        self.dbthing = self.things.DBThing(**self.data)     # type: ignore
+        self.things.db.session.add(self.dbthing)    # type: ignore
+        self.things.db.session.commit()  # type: ignore
 
     def tearDown(self) -> None:
         """Clear the database and tear down all tables."""
-        self.things.db.session.remove() # type: ignore
-        self.things.db.drop_all() # type: ignore
+        self.things.db.session.remove()  # type: ignore
+        self.things.db.drop_all()    # type: ignore
 
     def test_store_a_thing(self) -> None:
         """A new row is added for the thing."""
         the_thing = Thing(name='The new thing', created=datetime.now())
 
-        self.things.store_a_thing(the_thing) # type: ignore
+        self.things.store_a_thing(the_thing)     # type: ignore
         self.assertGreater(the_thing.id, 0, "Thing.id is updated with pk id")
 
-        dbthing = self.things.db.session.query(self.things.DBThing).get(the_thing.id) # type: ignore
+        session = self.things.db.session
+        query = session.query(self.things.DBThing)
+        dbthing = query.get(the_thing.id)   # type: ignore
 
         self.assertEqual(dbthing.name, the_thing.name)
 
@@ -113,26 +115,32 @@ class TestThingUpdater(TestCase):
                 'SQLALCHEMY_TRACK_MODIFICATIONS': False
             }, extensions={}, root_path=''
         )
-        self.things.db.init_app(app) # type: ignore
-        self.things.db.app = app # type: ignore
-        self.things.db.create_all() # type: ignore
+        self.things.db.init_app(app)    # type: ignore
+        self.things.db.app = app    # type: ignore
+        self.things.db.create_all()     # type: ignore
 
         self.data = dict(name='The first thing', created=datetime.now())
-        self.dbthing = self.things.DBThing(**self.data) # type: ignore
-        self.things.db.session.add(self.dbthing) # type: ignore
-        self.things.db.session.commit() # type: ignore
+        self.dbthing = self.things.DBThing(**self.data)     # type: ignore
+        self.things.db.session.add(self.dbthing)    # type: ignore
+        self.things.db.session.commit()  # type: ignore
 
     def tearDown(self) -> None:
         """Clear the database and tear down all tables."""
-        self.things.db.session.remove() # type: ignore
-        self.things.db.drop_all() # type: ignore
+        self.things.db.session.remove()     # type: ignore
+        self.things.db.drop_all()   # type: ignore
 
     def test_update_a_thing(self) -> None:
         """The db is updated with the current state of the :class:`.Thing`."""
-        the_thing = Thing(id=self.dbthing.id, name='Whoops')
-        self.things.update_a_thing(the_thing) # type: ignore
+        the_thing = Thing(
+            id=self.dbthing.id,
+            name='Whoops',
+            created=datetime.now()
+        )
+        self.things.update_a_thing(the_thing)   # type: ignore
 
-        dbthing = self.things.db.session.query(self.things.DBThing).get(self.dbthing.id) # type: ignore
+        session = self.things.db.session
+        query = session.query(self.things.DBThing)  # type: ignore
+        dbthing = query.get(self.dbthing.id)    # type: ignore
 
         self.assertEqual(dbthing.name, the_thing.name)
 
@@ -141,25 +149,32 @@ class TestThingUpdater(TestCase):
         """When the db raises an OperationalError, an IOError is raised."""
         the_thing = Thing(id=self.dbthing.id, name='Whoops')
 
-        def raise_op_error(*args, **kwargs) -> None: # type: ignore
+        def raise_op_error(*args, **kwargs) -> None:    # type: ignore
             raise sqlalchemy.exc.OperationalError('statement', {}, None)
         mock_query.side_effect = raise_op_error
 
         with self.assertRaises(IOError):
-            self.things.update_a_thing(the_thing) # type: ignore
+            self.things.update_a_thing(the_thing)   # type: ignore
 
     def test_thing_really_does_not_exist(self) -> None:
         """If the :class:`.Thing` doesn't exist, a RuntimeError is raised."""
-        the_thing = Thing(id=555, name='Whoops')    # Unlikely to exist.
+        the_thing = Thing(
+            id=555,
+            name='Whoops',
+            created=datetime.now()
+        )
         with self.assertRaises(RuntimeError):
-            self.things.update_a_thing(the_thing) # type: ignore
+            self.things.update_a_thing(the_thing)   # type: ignore
 
     @mock.patch('zero.services.things.db.session.query')
     def test_thing_does_not_exist(self, mock_query: Any) -> None:
         """If the :class:`.Thing` doesn't exist, a RuntimeError is raised."""
-        the_thing = Thing(id=555, name='Whoops')    # Unlikely to exist.
+        the_thing = Thing(
+            id=555,
+            name='Whoops'
+        ) 
         mock_query.return_value = mock.MagicMock(
             get=mock.MagicMock(return_value=None)
         )
         with self.assertRaises(RuntimeError):
-            self.things.update_a_thing(the_thing) # type: ignore
+            self.things.update_a_thing(the_thing)   # type: ignore

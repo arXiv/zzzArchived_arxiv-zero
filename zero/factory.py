@@ -9,7 +9,10 @@ from zero import celeryconfig
 from zero.routes import external_api, ui
 from zero.services import baz, things
 from zero.encode import ISO8601JSONEncoder
+from zero.middleware import auth
+from arxiv.base.middleware import wrap
 from arxiv.base import Base
+
 
 celery_app = Celery(__name__, results=celeryconfig.result_backend,
                     broker=celeryconfig.broker_url)
@@ -31,6 +34,8 @@ def create_web_app() -> Flask:
     celery_app.config_from_object(celeryconfig)
     celery_app.autodiscover_tasks(['zero'], related_name='tasks', force=True)
     celery_app.conf.task_default_queue = 'zero-worker'
+
+    wrap(app, [auth.ExampleAuthMiddleware])
 
     return app
 

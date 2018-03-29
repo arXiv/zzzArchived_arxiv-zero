@@ -1,6 +1,6 @@
 """Handles all thing-related requests."""
 
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Any, Dict
 from datetime import datetime
 from zero import status
 from zero.services import things
@@ -22,7 +22,7 @@ TASK_FAILED = {'status': 'failed'}
 TASK_COMPLETE = {'status': 'complete'}
 
 
-Response = Tuple[Optional[dict], int, dict]
+Response = Tuple[Dict[str, Any], int, Dict[str, Any]]
 
 
 def get_thing(thing_id: int) -> Response:
@@ -43,6 +43,7 @@ def get_thing(thing_id: int) -> Response:
     dict
         Some extra headers to add to the response.
     """
+    response_data: Dict[str, Any]
     try:
         thing: Optional[Thing] = things.get_a_thing(thing_id)
         if thing is None:
@@ -81,15 +82,17 @@ def create_a_thing(thing_data: dict) -> Response:
     """
     name = thing_data.get('name')
     headers = {}
+    response_data: Dict[str, Any]
     if not name or not isinstance(name, str):
         status_code = status.HTTP_400_BAD_REQUEST
         response_data = MISSING_NAME
     else:
-        thing = Thing(name=name, created=datetime.now())
+        thing = Thing(name=name, created=datetime.now())      # type: ignore
         try:
             things.store_a_thing(thing)
             status_code = status.HTTP_201_CREATED
-            thing_url = url_for('external_api.read_thing', thing_id=thing.id)
+            thing_url = url_for('external_api.read_thing',  # type: ignore
+                                thing_id=thing.id)
             response_data = {
                 'id': thing.id,
                 'name': thing.name,

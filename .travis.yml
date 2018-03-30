@@ -12,6 +12,6 @@ script:
   - pipenv install --dev
   - ./lintstats.sh
   - ./tests/docker_tests.sh
-  - pipenv run nose2
+  - pipenv run --dev nose2
 after_success:
   - coveralls

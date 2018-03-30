@@ -9,9 +9,11 @@ python:
   - "3.6"
 script:
   - pip install pipenv
+  - pipenv install
   - pipenv install --dev
+  - pipenv install nose2 pydocstyle pylint mypy coverage
   - ./lintstats.sh
   - ./tests/docker_tests.sh
-  - pipenv run --dev nose2
+  - pipenv run nose2
 after_success:
   - coveralls

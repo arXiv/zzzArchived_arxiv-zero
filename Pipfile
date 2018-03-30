@@ -19,7 +19,6 @@ uwsgi = "*"
 "nose2" = "*"
 dataclasses = "*"
 mypy = "*"
-"17e504d" = {path = "./../arxiv-base-ui"}
 arxiv-base = "*"
 
 

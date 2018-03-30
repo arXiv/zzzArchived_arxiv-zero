@@ -76,10 +76,7 @@ class BazServiceSession(object):
             logger.debug('Baz response could not be decoded')
             raise IOError('Could not read the baz') from e
         logger.debug('Got a baz with foo: %s', data.get('foo'))
-        instance = Baz()
-        instance.foo = data['city']
-        instance.mukluk = data['ip_decimal']
-        return instance
+        return Baz(foo=data['city'], mukluk=data['ip_decimal'])  # type: ignore
 
 
 def init_app(app: Optional[LocalProxy] = None) -> None:

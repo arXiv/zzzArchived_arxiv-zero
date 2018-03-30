@@ -1,25 +1,12 @@
 """Provides access to the Things data store."""
 
-from sqlalchemy import Column, DateTime, Integer, String
-from sqlalchemy.exc import OperationalError
-from flask_sqlalchemy import SQLAlchemy, Model
-from werkzeug.local import LocalProxy
 from typing import Any, Dict, Optional
+
+from werkzeug.local import LocalProxy
+from sqlalchemy.exc import OperationalError
+
 from zero.domain import Thing
-
-db: SQLAlchemy = SQLAlchemy()
-
-
-class DBThing(db.Model):
-    """Model for things."""
-
-    __tablename__ = 'things'
-    id = Column(Integer, primary_key=True)
-    """The unique identifier for a thing."""
-    name = Column(String(255))
-    """The name of the thing."""
-    created = Column(DateTime)
-    """The datetime when the thing was created."""
+from .models import db, DBThing
 
 
 def init_app(app: Optional[LocalProxy]) -> None:
@@ -53,7 +40,7 @@ def get_a_thing(id: int) -> Optional[Thing]:
         raise IOError('Could not query database: %s' % e.detail) from e
     if thing_data is None:
         return None
-    return Thing(id=thing_data.id, name=thing_data.name,
+    return Thing(id=thing_data.id, name=thing_data.name,    # type: ignore
                  created=thing_data.created)
 
 
@@ -72,7 +59,7 @@ def store_a_thing(the_thing: Thing) -> Thing:
     RuntimeError
         When there is some other problem.
     """
-    thing_data = DBThing(name=the_thing.name, created=the_thing.created)
+    thing_data = DBThing(name=the_thing.name, created=the_thing.created)    # type: ignore
     try:
         db.session.add(thing_data)
         db.session.commit()

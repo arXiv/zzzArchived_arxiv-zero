@@ -1,9 +1,0 @@
-[run]
-omit =
-    app.py
-    zero/worker.py
-    docs/*
-    */test*
-    wsgi.py
-    zero/config.py
-    populate_test_database.py

@@ -1,0 +1,179 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>zero.routes.ui &#8212; arXiv Zero 0.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for zero.routes.ui</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provides routes for the external user interface.</span>
+
+<span class="sd">The heart of this module is the ``blueprint`` object, an instance of</span>
+<span class="sd">:class:`flask.Blueprint`. The blueprint pulls together a set of URL routing</span>
+<span class="sd">rules that are attached to the Flask application in :mod:`.factory`.</span>
+
+<span class="sd">Exception handling</span>
+<span class="sd">------------------</span>
+<span class="sd">We also attach exception handlers to the blueprint, so that we can render</span>
+<span class="sd">responses that are tailored to this specific set of routes. Since this module</span>
+<span class="sd">defines a blueprint for HTML user interfaces, our exception handlers here will</span>
+<span class="sd">generate HTML responses. Note also that :mod:`arxiv.base.exceptions` provides</span>
+<span class="sd">a set of default HTML error handlers, which may be sufficient for most</span>
+<span class="sd">use-cases and will catch anything not handled on the blueprint.</span>
+
+<span class="sd">Note that each handler renders a custom template (in</span>
+<span class="sd">zero/templates/zero/). Each of those templates extends a template in</span>
+<span class="sd">arxiv.base that provides the general layout and the funky</span>
+<span class="sd">skull-and-crossbones image. See</span>
+<span class="sd">http://github.com/cul-it/arxiv-base/tree/master/arxiv/base/templates/base</span>
+
+<span class="sd">See :func:`handle_bad_request`.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">make_response</span>
+<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">BadRequest</span><span class="p">,</span> <span class="n">NotFound</span><span class="p">,</span> <span class="n">Unauthorized</span><span class="p">,</span> <span class="n">Forbidden</span>
+<span class="kn">from</span> <span class="nn">arxiv</span> <span class="k">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">zero</span> <span class="k">import</span> <span class="n">authorization</span>
+<span class="kn">from</span> <span class="nn">zero.controllers</span> <span class="k">import</span> <span class="n">baz</span><span class="p">,</span> <span class="n">things</span>
+
+<span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;ui&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/zero/ui&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_baz"><a class="viewcode-back" href="../../../api/zero.routes.ui.html#zero.routes.ui.read_baz">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/baz/&lt;int:baz_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">read_baz</span><span class="p">(</span><span class="n">baz_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Provide some data about the baz.&quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">get_baz</span><span class="p">(</span><span class="n">baz_id</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;zero/baz.html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span></div>
+
+
+<div class="viewcode-block" id="read_thing"><a class="viewcode-back" href="../../../api/zero.routes.ui.html#zero.routes.ui.read_thing">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/thing/&lt;int:thing_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@authorization</span><span class="o">.</span><span class="n">scoped</span><span class="p">(</span><span class="s1">&#39;read:thing&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">read_thing</span><span class="p">(</span><span class="n">thing_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Provide some data about the thing.&quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">things</span><span class="o">.</span><span class="n">get_thing</span><span class="p">(</span><span class="n">thing_id</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;zero/thing.html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span></div>
+
+
+<span class="c1"># Here&#39;s where we register custom error handlers for this blueprint. These will</span>
+<span class="c1"># catch the indicated Werkzeug exceptions that are raised within the context</span>
+<span class="c1"># of this blueprint (i.e. while executing any of the routes above).</span>
+
+
+<div class="viewcode-block" id="handle_bad_request"><a class="viewcode-back" href="../../../api/zero.routes.ui.html#zero.routes.ui.handle_bad_request">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">BadRequest</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">handle_bad_request</span><span class="p">(</span><span class="n">error</span><span class="p">:</span> <span class="n">BadRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Render a custom error page for 400 Bad Request responses.</span>
+
+<span class="sd">    The ``pagetitle`` context variable sets the ``title`` in the document</span>
+<span class="sd">    head. The exception message is used to generate the message below the</span>
+<span class="sd">    error code image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;zero/400_bad_request.html&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+                               <span class="n">pagetitle</span><span class="o">=</span><span class="s2">&quot;Nope! 400 Bad Request&quot;</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">rendered</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="handle_unauthorized"><a class="viewcode-back" href="../../../api/zero.routes.ui.html#zero.routes.ui.handle_unauthorized">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">Unauthorized</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">handle_unauthorized</span><span class="p">(</span><span class="n">error</span><span class="p">:</span> <span class="n">Unauthorized</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Render a custom error page for 401 Unauthorized responses.&quot;&quot;&quot;</span>
+    <span class="n">rendered</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;zero/401_unauthorized.html&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+                               <span class="n">pagetitle</span><span class="o">=</span><span class="s2">&quot;Who are you?&quot;</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">rendered</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">arXiv Zero</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">zero</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Jane Bloggs.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

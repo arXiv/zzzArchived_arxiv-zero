@@ -1,0 +1,303 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Architecture &#8212; arXiv Zero 0.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="zero" href="api/modules.html" />
+    <link rel="prev" title="Welcome to arXiv Zero’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The arXiv Zero service is a starting-point for developing web services
+in the arXiv-NG project. It demonstrates some of the basic patterns for
+developing a web service in Flask.</p>
+</div>
+<div class="section" id="objectives-requirements">
+<h2>Objectives &amp; Requirements<a class="headerlink" href="#objectives-requirements" title="Permalink to this headline">¶</a></h2>
+<p>The arXiv Zero service is responsible for demonstrating the basic internal
+architecture for arXiv-NG microservices. It should:</p>
+<ol class="arabic simple">
+<li>Demonstrate the desired project layout for an NG microservice project.</li>
+<li>Provide an example of a WSGI application implemented in Flask, with the
+desired internal architecture.</li>
+<li>Demonstrate some patterns for testing parts of the application.</li>
+<li>Demonstrate how to begin documenting a microservice for NG.</li>
+<li>Demonstrate the CI/CD and build mechanisms used for NG projects.</li>
+</ol>
+</div>
+<div class="section" id="solution-strategy">
+<h2>Solution Strategy<a class="headerlink" href="#solution-strategy" title="Permalink to this headline">¶</a></h2>
+<p>This section shows how you might write the solution strategy section of an
+actual NG service.</p>
+<div class="section" id="context">
+<h3>Context<a class="headerlink" href="#context" title="Permalink to this headline">¶</a></h3>
+<p>The arXiv Zero service provides a RESTful API that exposes <code class="docutils literal notranslate"><span class="pre">baz</span></code> and
+<code class="docutils literal notranslate"><span class="pre">thing</span></code> resources. It is primarily intended for use by API consumers via
+the API gateway.</p>
+<p>The Zero service relies on the <code class="docutils literal notranslate"><span class="pre">Baz</span></code> service to retrieve data about baz’.</p>
+</div>
+<div class="section" id="building-blocks">
+<h3>Building blocks<a class="headerlink" href="#building-blocks" title="Permalink to this headline">¶</a></h3>
+<p>The Zero service is comprised of two main building blocks:</p>
+<ul class="simple">
+<li>A Python WSGI application, implemented using Flask.</li>
+<li>The Things data store, a relational database.</li>
+</ul>
+</div>
+<div class="section" id="components">
+<h3>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="wsgi">
+<h4>WSGI<a class="headerlink" href="#wsgi" title="Permalink to this headline">¶</a></h4>
+<p>The primary entrypoint for the arXiv Zero service is a Web Server Gateway
+Interface application provided by <code class="docutils literal notranslate"><span class="pre">wsgi.py</span></code> in the root of the project
+(outside of the <code class="docutils literal notranslate"><span class="pre">zero</span></code> package). The WSGI module relies on an application
+factory in the <a class="reference internal" href="api/zero.factory.html#module-zero.factory" title="zero.factory"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factory</span></code></a> module, which is responsible for instantiating
+and configuring a Flask application instance upon each HTTP request.</p>
+</div>
+<div class="section" id="routes">
+<h4>Routes<a class="headerlink" href="#routes" title="Permalink to this headline">¶</a></h4>
+<p>The HTTP routes provided by the application are defined in the <a class="reference internal" href="api/zero.routes.html#module-zero.routes" title="zero.routes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">routes</span></code></a>
+module. This module is responsible for routing requests, response
+serialization, and authorization.</p>
+<p>Each submodule
+provides a <a class="reference external" href="http://flask.pocoo.org/docs/0.12/blueprints/">blueprint</a> object
+that describes the HTTP routes available. That blueprint object is attached
+to the Flask application upon instantiation.</p>
+<ul class="simple">
+<li><a class="reference internal" href="api/zero.routes.external_api.html#module-zero.routes.external_api" title="zero.routes.external_api"><code class="xref py py-mod docutils literal notranslate"><span class="pre">routes.external_api</span></code></a><ul>
+<li><a class="reference internal" href="api/zero.routes.external_api.html#zero.routes.external_api.read_baz" title="zero.routes.external_api.read_baz"><code class="xref py py-func docutils literal notranslate"><span class="pre">routes.external_api.read_baz()</span></code></a></li>
+<li><a class="reference internal" href="api/zero.routes.external_api.html#zero.routes.external_api.read_thing" title="zero.routes.external_api.read_thing"><code class="xref py py-func docutils literal notranslate"><span class="pre">routes.external_api.read_thing()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="controllers">
+<span id="id1"></span><h4>Controllers<a class="headerlink" href="#controllers" title="Permalink to this headline">¶</a></h4>
+<p>Controller modules are the primary point of control for application execution.
+These modules orchestrate processing in response to request data, utilizing the
+functionality provided by the process and services modules, and generating a
+response.</p>
+<p>A controller module exposes an internal API for use by the routes modules. The
+functions that comprise that API should accept and return native Python data
+types. The objects/classes provided by the data domain modules do not escape
+beyond this point.</p>
+<p>Controller modules may make thoughtful use of Flask utilities and helpers,
+taking care not to undermine isolation for unit-testing. The Flask <code class="docutils literal notranslate"><span class="pre">request</span></code>
+proxy object, however, should not be used directly here; interaction with the
+client request is the responsibility of the routes modules.</p>
+<ul class="simple">
+<li><a class="reference internal" href="api/zero.controllers.baz.html#module-zero.controllers.baz" title="zero.controllers.baz"><code class="xref py py-mod docutils literal notranslate"><span class="pre">controllers.baz</span></code></a></li>
+<li><a class="reference internal" href="api/zero.controllers.things.html#module-zero.controllers.things" title="zero.controllers.things"><code class="xref py py-mod docutils literal notranslate"><span class="pre">controllers.things</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="data-domain">
+<h4>Data Domain<a class="headerlink" href="#data-domain" title="Permalink to this headline">¶</a></h4>
+<p>The data domain modules provide descriptions of the data that will be passed
+around inside of the application. The objects or classes provided by these
+modules provide a shared reference point for the rest of the application. These
+descriptions may be as minimal as a set of <a class="reference external" href="https://docs.python.org/3/library/typing.html#type-aliases">type aliases</a>  built from
+native Python data types, or as elaborate as a hierarchy of classes
+representing complex data structures. They assist in documentation, testing,
+and static analysis.</p>
+<p>The objects or classes in this module can be imported and used by the
+process, service, and controller modules.</p>
+<p>In contrast to some architectures, we don’t assume that these structures relate
+to anything outside of a given service. They are strictly for reasoning about
+data inside of the service. Importantly, these modules <strong>do not</strong> implement
+business logic, nor are they concerned with persistence. Those concerns are
+left to the process and services modules.</p>
+<ul class="simple">
+<li><a class="reference internal" href="api/zero.domain.html#module-zero.domain" title="zero.domain"><code class="xref py py-mod docutils literal notranslate"><span class="pre">domain</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="services">
+<h4>Services<a class="headerlink" href="#services" title="Permalink to this headline">¶</a></h4>
+<p>Service modules provide integrations with external services, including
+databases. Each service module is concerned with a single external service, and
+provides an API (generally a set of functions) for use by the controller
+modules. The functions or methods exposed by each module should accept and
+return only native Python types and/or data objects defined in the data domain
+module(s).</p>
+<p>Modules for integrating with external services and data stores (the Baz service
+and the Thing data store) are provided by <a class="reference internal" href="api/zero.services.html#module-zero.services" title="zero.services"><code class="xref py py-mod docutils literal notranslate"><span class="pre">services</span></code></a>. Each service module
+provides a method for preparing the application to use the service (usually a
+function called <code class="docutils literal notranslate"><span class="pre">init_app()</span></code>), and a set of methods for interacting with the
+service (e.g. to retrieve or update data). These service modules are used by
+the controllers to coordinate interaction with external services on the basis
+of client requests.</p>
+<ul class="simple">
+<li><a class="reference internal" href="api/zero.services.baz.html#module-zero.services.baz" title="zero.services.baz"><code class="xref py py-mod docutils literal notranslate"><span class="pre">services.baz</span></code></a></li>
+<li><a class="reference internal" href="api/zero.services.things.html#module-zero.services.things" title="zero.services.things"><code class="xref py py-mod docutils literal notranslate"><span class="pre">services.things</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="process-modules">
+<h4>Process Modules<a class="headerlink" href="#process-modules" title="Permalink to this headline">¶</a></h4>
+<p>Process modules provide data transformation functionality. They encode the
+majority of the  business logic of the application. Each process module exposes
+an internal API, generally a set of functions representing the use-cases
+supported by the module. The functions or methods exposed by each module should
+accept and return only native Python types and/or data objects defined in the
+data domain modules.</p>
+<p>To facilitate testing, process modules should generally be framework-agnostic.
+Process modules are imported and used by the controller modules.</p>
+<ul class="simple">
+<li><a class="reference internal" href="api/zero.process.mutate.html#module-zero.process.mutate" title="zero.process.mutate"><code class="xref py py-mod docutils literal notranslate"><span class="pre">process.mutate</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="exceptions">
+<h4>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h4>
+<p>We use the HTTP exceptions defined in <a class="reference external" href="http://werkzeug.pocoo.org/docs/0.14/exceptions/#module-werkzeug.exceptions" title="(in Werkzeug v0.14)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">werkzeug.exceptions</span></code></a> to trigger
+responses &gt;= 400. These exceptions should be raised in <a class="reference internal" href="#controllers"><span class="std std-ref">Controllers</span></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">arxiv.base</span></code> package attaches a set of default error handlers to the
+Flask application. These render some lovely templates, using the error
+description (the message passed when the exception is raised). Those handlers
+can be overridden by defining custom error handlers on each blueprint in the
+application.</p>
+<p>For examples of how this can be done for UI and API views, see
+<a class="reference internal" href="api/zero.routes.ui.html#module-zero.routes.ui" title="zero.routes.ui"><code class="xref py py-mod docutils literal notranslate"><span class="pre">zero.routes.ui</span></code></a> and <a class="reference internal" href="api/zero.routes.external_api.html#module-zero.routes.external_api" title="zero.routes.external_api"><code class="xref py py-mod docutils literal notranslate"><span class="pre">zero.routes.external_api</span></code></a>, respectively.</p>
+</div>
+<div class="section" id="static-files-templates">
+<h4>Static Files &amp; Templates<a class="headerlink" href="#static-files-templates" title="Permalink to this headline">¶</a></h4>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">write this section</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="cross-cutting-concepts">
+<h2>Cross-cutting Concepts<a class="headerlink" href="#cross-cutting-concepts" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="schema">
+<h3>Schema<a class="headerlink" href="#schema" title="Permalink to this headline">¶</a></h3>
+<p>Each API endpoint should have a corresponding JSON schema document located in
+<code class="docutils literal notranslate"><span class="pre">schema/</span></code>. This will become part of the documentation for this service,
+and can also be used for testing.</p>
+</div>
+<div class="section" id="deployment">
+<h3>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h3>
+<p>The arXiv Zero service is intended to be deployed behind a WSGI application
+server in a Docker container.</p>
+<p>In this project, we use the <a class="reference external" href="https://uwsgi-docs.readthedocs.io/en/latest/">uWSGI</a> application server, which
+provides the <a class="reference external" href="http://uwsgi-docs.readthedocs.io/en/latest/uGreen.html">uGreen</a>
+thread scheduler for asynchronous request handling.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Dockerfile</span></code> in the root of the project defines the application server
+runtime. You can build it with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> &lt;project root&gt;
+docker build ./ -t arxiv/zero
+</pre></div>
+</div>
+<p>arXiv Zero is run within a private network topology, and is exposed to the
+outside world via a level 7 load balancer that handles SSL termination. Thus
+the Zero service is not responsible for SSL.</p>
+</div>
+<div class="section" id="continuous-integration">
+<h3>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this headline">¶</a></h3>
+<p>NG projects are tested by <a class="reference external" href="https://travis-ci.com">Travis-CI</a> on each commit,
+PR, and release. See <code class="docutils literal notranslate"><span class="pre">.travis.yml</span></code> in the root of this project for a sample
+build configuration. See <a class="reference external" href="https://docs.travis-ci.com/user/customizing-the-build/">this documentation</a> for details on
+customing Travis builds.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">arXiv Zero</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#objectives-requirements">Objectives &amp; Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#solution-strategy">Solution Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cross-cutting-concepts">Cross-cutting Concepts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">zero</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to arXiv Zero’s documentation!</a></li>
+      <li>Next: <a href="api/modules.html" title="next chapter">zero</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Jane Bloggs.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/architecture.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

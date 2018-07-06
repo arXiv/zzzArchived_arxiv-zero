@@ -1,0 +1,215 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>zero.services.tests.test_foo &#8212; arXiv Zero 0.2 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for zero.services.tests.test_foo</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tests for :mod:`zero.services.foo`.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="k">import</span> <span class="n">mock</span><span class="p">,</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">zero.services</span> <span class="k">import</span> <span class="n">baz</span>
+<span class="kn">from</span> <span class="nn">zero.domain</span> <span class="k">import</span> <span class="n">Baz</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="TestBazServiceStatus"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceStatus">[docs]</a><span class="k">class</span> <span class="nc">TestBazServiceStatus</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The method :meth:`.status` indicates the status of the Baz service.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBazServiceStatus.test_status_true_when_remote_is_ok"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceStatus.test_status_true_when_remote_is_ok">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.baz.requests.Session&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_status_true_when_remote_is_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If the remote baz service is OK, :meth:`.status` returns True.&quot;&quot;&quot;</span>
+        <span class="n">mock_get_response</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">mock_get</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">mock_get_response</span><span class="p">)</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">()</span>
+        <span class="nb">type</span><span class="p">(</span><span class="n">mock_session_instance</span><span class="p">)</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="n">mock_get</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+
+        <span class="n">bazSession</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">BazServiceSession</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">bazSession</span><span class="o">.</span><span class="n">status</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="TestBazServiceStatus.test_status_false_when_remote_not_ok"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceStatus.test_status_false_when_remote_not_ok">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.baz.requests.Session&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_status_false_when_remote_not_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If the remote baz service isn&#39;t ok :meth:`.status` returns False.&quot;&quot;&quot;</span>
+        <span class="n">mock_head_response</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">503</span><span class="p">,</span> <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mock_head</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">mock_head_response</span><span class="p">)</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">()</span>
+        <span class="nb">type</span><span class="p">(</span><span class="n">mock_session_instance</span><span class="p">)</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">mock_head</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+
+        <span class="n">bazSession</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">BazServiceSession</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">bazSession</span><span class="o">.</span><span class="n">status</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="TestBazServiceStatus.test_status_false_when_error_occurs"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceStatus.test_status_false_when_error_occurs">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.baz.requests.Session&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_status_false_when_error_occurs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If there is a problem calling baz :meth:`.status` returns False.&quot;&quot;&quot;</span>
+        <span class="n">mock_head</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">side_effect</span><span class="o">=</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">)</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">()</span>
+        <span class="nb">type</span><span class="p">(</span><span class="n">mock_session_instance</span><span class="p">)</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">mock_head</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+
+        <span class="n">bazSession</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">BazServiceSession</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">bazSession</span><span class="o">.</span><span class="n">status</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="TestBazServiceRetrieve"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceRetrieve">[docs]</a><span class="k">class</span> <span class="nc">TestBazServiceRetrieve</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The method :meth:`.retrieve_baz` is for getting baz.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBazServiceRetrieve.test_returns_none_when_not_found"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceRetrieve.test_returns_none_when_not_found">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.baz.requests.Session&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_returns_none_when_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If there is no such baz, returns None.&quot;&quot;&quot;</span>
+        <span class="n">mock_get_response</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mock_get</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">mock_get_response</span><span class="p">)</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">()</span>
+        <span class="nb">type</span><span class="p">(</span><span class="n">mock_session_instance</span><span class="p">)</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="n">mock_get</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+
+        <span class="n">bazSession</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">BazServiceSession</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">bazSession</span><span class="o">.</span><span class="n">retrieve_baz</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestBazServiceRetrieve.test_returns_baz_when_valid_json"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceRetrieve.test_returns_baz_when_valid_json">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.baz.requests.Session&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_returns_baz_when_valid_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If there is a baz, returns a :class:`.Baz`.&quot;&quot;&quot;</span>
+        <span class="n">mock_json</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;city&#39;</span><span class="p">:</span> <span class="s1">&#39;fooville&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ip_decimal&#39;</span><span class="p">:</span> <span class="mi">12346</span>
+        <span class="p">})</span>
+        <span class="n">mock_get_response</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">json</span><span class="o">=</span><span class="n">mock_json</span><span class="p">)</span>
+        <span class="n">mock_get</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">mock_get_response</span><span class="p">)</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">()</span>
+        <span class="nb">type</span><span class="p">(</span><span class="n">mock_session_instance</span><span class="p">)</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="n">mock_get</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+
+        <span class="n">bazSession</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">BazServiceSession</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="n">thebaz</span> <span class="o">=</span> <span class="n">bazSession</span><span class="o">.</span><span class="n">retrieve_baz</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="n">thebaz</span><span class="p">,</span> <span class="n">Baz</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thebaz</span><span class="p">,</span> <span class="n">Baz</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">thebaz</span><span class="o">.</span><span class="n">foo</span><span class="p">,</span> <span class="s1">&#39;fooville&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">thebaz</span><span class="o">.</span><span class="n">mukluk</span><span class="p">,</span> <span class="mi">12346</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBazServiceRetrieve.test_raise_ioerror_when_status_not_ok"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceRetrieve.test_raise_ioerror_when_status_not_ok">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.baz.requests.Session&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_raise_ioerror_when_status_not_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If the the baz service returns a bad status, raises IOError.&quot;&quot;&quot;</span>
+        <span class="n">mock_get_response</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mock_get</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">mock_get_response</span><span class="p">)</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">()</span>
+        <span class="nb">type</span><span class="p">(</span><span class="n">mock_session_instance</span><span class="p">)</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="n">mock_get</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+
+        <span class="n">bazSession</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">BazServiceSession</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
+            <span class="n">bazSession</span><span class="o">.</span><span class="n">retrieve_baz</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestBazServiceRetrieve.test_raises_ioerror_when_data_is_bad"><a class="viewcode-back" href="../../../../api/zero.services.tests.test_foo.html#zero.services.tests.test_foo.TestBazServiceRetrieve.test_raises_ioerror_when_data_is_bad">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.baz.requests.Session&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_raises_ioerror_when_data_is_bad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If the the baz service retrieves non-JSON data, raises IOError.&quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">raise_decoderror</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">(</span><span class="s1">&#39;msg&#39;</span><span class="p">,</span> <span class="s1">&#39;doc&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">mock_json</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">side_effect</span><span class="o">=</span><span class="n">raise_decoderror</span><span class="p">)</span>
+        <span class="n">mock_get_response</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">json</span><span class="o">=</span><span class="n">mock_json</span><span class="p">)</span>
+        <span class="n">mock_get</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">mock_get_response</span><span class="p">)</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">()</span>
+        <span class="nb">type</span><span class="p">(</span><span class="n">mock_session_instance</span><span class="p">)</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="n">mock_get</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+
+        <span class="n">bazSession</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">BazServiceSession</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
+            <span class="n">bazSession</span><span class="o">.</span><span class="n">retrieve_baz</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">arXiv Zero</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/modules.html">zero</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Jane Bloggs.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>zero.services.things.tests &#8212; arXiv Zero 0.2 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for zero.services.things.tests</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tests for :mod:`zero.services.things`.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="k">import</span> <span class="n">TestCase</span><span class="p">,</span> <span class="n">mock</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">zero.services</span> <span class="k">import</span> <span class="n">things</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy</span>
+<span class="kn">from</span> <span class="nn">zero.domain</span> <span class="k">import</span> <span class="n">Thing</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="TestThingGetter"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingGetter">[docs]</a><span class="k">class</span> <span class="nc">TestThingGetter</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The method :meth:`.get_a_thing` retrieves data about things.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestThingGetter.setUp"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingGetter.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize an in-memory SQLite database.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">zero.services</span> <span class="k">import</span> <span class="n">things</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span> <span class="o">=</span> <span class="n">things</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+                <span class="c1"># &#39;SQLALCHEMY_DATABASE_URI&#39;: &#39;mysql://bob:dole@localhost/ack&#39;,</span>
+                <span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">:</span> <span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;SQLALCHEMY_TRACK_MODIFICATIONS&#39;</span><span class="p">:</span> <span class="kc">False</span>
+            <span class="p">},</span> <span class="n">extensions</span><span class="o">=</span><span class="p">{},</span> <span class="n">root_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="p">)</span>
+        <span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+        <span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;The first thing&#39;</span><span class="p">,</span> <span class="n">created</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">DBThing</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>     <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span><span class="p">)</span>    <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>     <span class="c1"># type: ignore</span></div>
+
+<div class="viewcode-block" id="TestThingGetter.tearDown"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingGetter.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Clear the database and tear down all tables.&quot;&quot;&quot;</span>
+        <span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TestThingGetter.test_get_a_thing_that_exists"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingGetter.test_get_a_thing_that_exists">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_a_thing_that_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;When the thing exists, returns a :class:`.Thing`.&quot;&quot;&quot;</span>
+        <span class="n">thing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get_a_thing</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">Thing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">created</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;created&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="TestThingGetter.test_get_a_thing_that_doesnt_exist"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingGetter.test_get_a_thing_that_doesnt_exist">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_a_thing_that_doesnt_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;When the thing doesn&#39;t exist, returns None.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">things</span><span class="o">.</span><span class="n">get_a_thing</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestThingGetter.test_get_thing_when_db_is_unavailable"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingGetter.test_get_thing_when_db_is_unavailable">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.things.db.session.query&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_get_thing_when_db_is_unavailable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_query</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;When the database squawks, raises an IOError.&quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">raise_op_error</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">OperationalError</span><span class="p">(</span><span class="s1">&#39;statement&#39;</span><span class="p">,</span> <span class="p">{},</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="n">raise_op_error</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get_a_thing</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div></div>
+
+
+<div class="viewcode-block" id="TestThingCreator"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingCreator">[docs]</a><span class="k">class</span> <span class="nc">TestThingCreator</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;:func:`.store_a_thing` creates a new record in the database.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestThingCreator.setUp"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingCreator.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize an in-memory SQLite database.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">zero.services</span> <span class="k">import</span> <span class="n">things</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span> <span class="o">=</span> <span class="n">things</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+                <span class="c1"># &#39;SQLALCHEMY_DATABASE_URI&#39;: &#39;mysql://bob:dole@localhost/ack&#39;,</span>
+                <span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">:</span> <span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;SQLALCHEMY_TRACK_MODIFICATIONS&#39;</span><span class="p">:</span> <span class="kc">False</span>
+            <span class="p">},</span> <span class="n">extensions</span><span class="o">=</span><span class="p">{},</span> <span class="n">root_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>    <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>    <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;The first thing&#39;</span><span class="p">,</span> <span class="n">created</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">DBThing</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>     <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span><span class="p">)</span>    <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># type: ignore</span></div>
+
+<div class="viewcode-block" id="TestThingCreator.tearDown"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingCreator.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Clear the database and tear down all tables.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>    <span class="c1"># type: ignore</span></div>
+
+<div class="viewcode-block" id="TestThingCreator.test_store_a_thing"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingCreator.test_store_a_thing">[docs]</a>    <span class="k">def</span> <span class="nf">test_store_a_thing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A new row is added for the thing.&quot;&quot;&quot;</span>
+        <span class="n">the_thing</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;The new thing&#39;</span><span class="p">,</span> <span class="n">created</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">store_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">)</span>     <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertGreater</span><span class="p">(</span><span class="n">the_thing</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Thing.id is updated with pk id&quot;</span><span class="p">)</span>
+
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">DBThing</span><span class="p">)</span>
+        <span class="n">dbthing</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">the_thing</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>   <span class="c1"># type: ignore</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">dbthing</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">the_thing</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TestThingUpdater"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingUpdater">[docs]</a><span class="k">class</span> <span class="nc">TestThingUpdater</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;:func:`.update_a_thing` updates the db with :class:`.Thing` data.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestThingUpdater.setUp"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingUpdater.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize an in-memory SQLite database.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">zero.services</span> <span class="k">import</span> <span class="n">things</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span> <span class="o">=</span> <span class="n">things</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+                <span class="c1"># &#39;SQLALCHEMY_DATABASE_URI&#39;: &#39;mysql://bob:dole@localhost/ack&#39;,</span>
+                <span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">:</span> <span class="s1">&#39;sqlite:///:memory:&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;SQLALCHEMY_TRACK_MODIFICATIONS&#39;</span><span class="p">:</span> <span class="kc">False</span>
+            <span class="p">},</span> <span class="n">extensions</span><span class="o">=</span><span class="p">{},</span> <span class="n">root_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>    <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>    <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>     <span class="c1"># type: ignore</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;The first thing&#39;</span><span class="p">,</span> <span class="n">created</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">DBThing</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>     <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span><span class="p">)</span>    <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># type: ignore</span></div>
+
+<div class="viewcode-block" id="TestThingUpdater.tearDown"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingUpdater.tearDown">[docs]</a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Clear the database and tear down all tables.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>     <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>   <span class="c1"># type: ignore</span></div>
+
+<div class="viewcode-block" id="TestThingUpdater.test_update_a_thing"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingUpdater.test_update_a_thing">[docs]</a>    <span class="k">def</span> <span class="nf">test_update_a_thing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The db is updated with the current state of the :class:`.Thing`.&quot;&quot;&quot;</span>
+        <span class="n">the_thing</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Whoops&#39;</span><span class="p">,</span>
+            <span class="n">created</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">update_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">)</span>   <span class="c1"># type: ignore</span>
+
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">session</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">DBThing</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">dbthing</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>    <span class="c1"># type: ignore</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">dbthing</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">the_thing</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestThingUpdater.test_operationalerror_is_handled"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingUpdater.test_operationalerror_is_handled">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.things.db.session.query&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_operationalerror_is_handled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_query</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;When the db raises an OperationalError, an IOError is raised.&quot;&quot;&quot;</span>
+        <span class="n">the_thing</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbthing</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Whoops&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">raise_op_error</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>    <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">OperationalError</span><span class="p">(</span><span class="s1">&#39;statement&#39;</span><span class="p">,</span> <span class="p">{},</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="n">raise_op_error</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">update_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">)</span>   <span class="c1"># type: ignore</span></div>
+
+<div class="viewcode-block" id="TestThingUpdater.test_thing_really_does_not_exist"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingUpdater.test_thing_really_does_not_exist">[docs]</a>    <span class="k">def</span> <span class="nf">test_thing_really_does_not_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If the :class:`.Thing` doesn&#39;t exist, a RuntimeError is raised.&quot;&quot;&quot;</span>
+        <span class="n">the_thing</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="mi">555</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Whoops&#39;</span><span class="p">,</span>
+            <span class="n">created</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">update_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">)</span>   <span class="c1"># type: ignore</span></div>
+
+<div class="viewcode-block" id="TestThingUpdater.test_thing_does_not_exist"><a class="viewcode-back" href="../../../../api/zero.services.things.tests.html#zero.services.things.tests.TestThingUpdater.test_thing_does_not_exist">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s1">&#39;zero.services.things.db.session.query&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_thing_does_not_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_query</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If the :class:`.Thing` doesn&#39;t exist, a RuntimeError is raised.&quot;&quot;&quot;</span>
+        <span class="n">the_thing</span> <span class="o">=</span> <span class="n">Thing</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="mi">555</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Whoops&#39;</span>
+        <span class="p">)</span> 
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span>
+            <span class="n">get</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">update_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">)</span>   <span class="c1"># type: ignore</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">arXiv Zero</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/modules.html">zero</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  <li><a href="../things.html">zero.services.things</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Jane Bloggs.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

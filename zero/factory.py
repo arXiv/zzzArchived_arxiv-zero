@@ -1,9 +1,10 @@
 """Application factory for zero app."""
 
-import logging
 
 from flask import Flask
 from celery import Celery
+
+from arxiv.base import logging
 
 from zero import celeryconfig
 from zero.routes import external_api, ui

@@ -2,7 +2,8 @@
 
 from typing import Tuple, Optional, Any, Dict
 from datetime import datetime
-from zero import status
+from werkzeug.exceptions import NotFound, BadRequest, InternalServerError
+from arxiv import status
 from zero.services import things
 from zero.domain import Thing
 from zero.tasks import mutate_a_thing, check_mutation_status
@@ -10,13 +11,13 @@ from zero.tasks import mutate_a_thing, check_mutation_status
 from zero.shared import url_for
 
 
-NO_SUCH_THING = {'reason': 'there is no thing'}
-THING_WONT_COME = {'reason': 'could not get the thing'}
-CANT_CREATE_THING = {'reason': 'could not create the thing'}
-MISSING_NAME = {'reason': 'a thing needs a name'}
-ACCEPTED = {'reason': 'mutation in progress'}
-INVALID_TASK_ID = {'reason': 'invalid task id'}
-TASK_DOES_NOT_EXIST = {'reason': 'task not found'}
+NO_SUCH_THING = 'there is no thing'
+THING_WONT_COME = 'could not get the thing'
+CANT_CREATE_THING = 'could not create the thing'
+MISSING_NAME = 'a thing needs a name'
+ACCEPTED = 'mutation in progress'
+INVALID_TASK_ID = 'invalid task id'
+TASK_DOES_NOT_EXIST = 'task not found'
 TASK_IN_PROGRESS = {'status': 'in progress'}
 TASK_FAILED = {'status': 'failed'}
 TASK_COMPLETE = {'status': 'complete'}
@@ -46,19 +47,18 @@ def get_thing(thing_id: int) -> Response:
     response_data: Dict[str, Any]
     try:
         thing: Optional[Thing] = things.get_a_thing(thing_id)
-        if thing is None:
-            status_code = status.HTTP_404_NOT_FOUND
-            response_data = NO_SUCH_THING
-        else:
-            status_code = status.HTTP_200_OK
-            response_data = {
-                'id': thing.id,
-                'name': thing.name,
-                'created': thing.created
-            }
     except IOError:
-        response_data = THING_WONT_COME
-        status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        raise InternalServerError(THING_WONT_COME)
+
+    if thing is None:
+        raise NotFound(NO_SUCH_THING)
+
+    status_code = status.HTTP_200_OK
+    response_data = {
+        'id': thing.id,
+        'name': thing.name,
+        'created': thing.created
+    }
     return response_data, status_code, {}
 
 
@@ -84,26 +84,24 @@ def create_a_thing(thing_data: dict) -> Response:
     headers = {}
     response_data: Dict[str, Any]
     if not name or not isinstance(name, str):
-        status_code = status.HTTP_400_BAD_REQUEST
-        response_data = MISSING_NAME
-    else:
-        thing = Thing(name=name, created=datetime.now())      # type: ignore
-        try:
-            things.store_a_thing(thing)
-            status_code = status.HTTP_201_CREATED
-            thing_url = url_for('external_api.read_thing',  # type: ignore
-                                thing_id=thing.id)
-            response_data = {
-                'id': thing.id,
-                'name': thing.name,
-                'created': thing.created,
-                'url': thing_url
-            }
-            headers['Location'] = thing_url
-        except RuntimeError as e:
-            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-            response_data = CANT_CREATE_THING
+        raise BadRequest(MISSING_NAME)
 
+    thing = Thing(name=name, created=datetime.now())      # type: ignore
+    try:
+        things.store_a_thing(thing)
+    except RuntimeError as e:
+        raise InternalServerError(CANT_CREATE_THING)
+
+    status_code = status.HTTP_201_CREATED
+    thing_url = url_for('external_api.read_thing',  # type: ignore
+                        thing_id=thing.id)
+    response_data = {
+        'id': thing.id,
+        'name': thing.name,
+        'created': thing.created,
+        'url': thing_url
+    }
+    headers['Location'] = thing_url
     return response_data, status_code, headers
 
 
@@ -151,9 +149,9 @@ def mutation_status(task_id: str) -> Response:
     try:
         task_status, result = check_mutation_status(task_id)
     except ValueError as e:
-        return INVALID_TASK_ID, status.HTTP_400_BAD_REQUEST, {}
+        raise BadRequest(INVALID_TASK_ID)
     if task_status == 'PENDING':
-        return TASK_DOES_NOT_EXIST, status.HTTP_404_NOT_FOUND, {}
+        raise NotFound(TASK_DOES_NOT_EXIST)
     elif task_status in ['SENT', 'STARTED', 'RETRY']:
         return TASK_IN_PROGRESS, status.HTTP_200_OK, {}
     elif task_status == 'FAILURE':
@@ -166,4 +164,4 @@ def mutation_status(task_id: str) -> Response:
         headers = {'Location': url_for('external_api.read_thing',
                                        thing_id=result['thing_id'])}
         return TASK_COMPLETE, status.HTTP_303_SEE_OTHER, headers
-    return TASK_DOES_NOT_EXIST, status.HTTP_404_NOT_FOUND, {}
+    raise NotFound(TASK_DOES_NOT_EXIST)

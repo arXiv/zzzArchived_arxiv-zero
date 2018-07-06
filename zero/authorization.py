@@ -8,6 +8,7 @@ from typing import Any, Callable, Dict, Tuple
 from werkzeug.exceptions import Forbidden, Unauthorized
 
 
+# TODO: this will be replaced by the arxiv.users package.
 def scoped(scope: str) -> Callable[[Any], Any]:
     """Generate a decorator to enforce scope authorization."""
     def protector(func: Callable[[Any], Any]) -> Callable[[Any], Any]:

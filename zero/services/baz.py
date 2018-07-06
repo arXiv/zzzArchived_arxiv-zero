@@ -8,8 +8,8 @@ from functools import wraps
 import requests
 from werkzeug.local import LocalProxy
 
-from zero.context import get_application_config, get_application_global
-from zero import logging
+from arxiv.base import logging
+from arxiv.base.globals import get_application_config, get_application_global
 from zero.domain import Baz
 
 

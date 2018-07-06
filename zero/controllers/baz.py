@@ -1,12 +1,13 @@
 """Handles all baz-related requests."""
 
 from typing import Tuple, Optional, Dict, Any
-from zero import status
+from werkzeug.exceptions import NotFound, InternalServerError
+from arxiv import status
 from zero.services import baz
 from zero.domain import Baz
 
-NO_BAZ = {'reason': 'could not find the baz'}
-BAZ_WONT_GO = {'reason': 'could not get the baz'}
+NO_BAZ = 'could not find the baz'
+BAZ_WONT_GO = 'could not get the baz'
 
 
 def get_baz(baz_id: int) -> Tuple[Optional[dict], int, dict]:
@@ -31,12 +32,10 @@ def get_baz(baz_id: int) -> Tuple[Optional[dict], int, dict]:
     try:
         the_baz: Baz = baz.retrieve_baz(baz_id)
         if the_baz is None:
-            status_code = status.HTTP_404_NOT_FOUND
-            baz_data = NO_BAZ
+            raise NotFound(NO_BAZ)
         else:
             status_code = status.HTTP_200_OK
             baz_data = {'foo': the_baz.foo, 'mukluk': the_baz.mukluk}
     except IOError:
-        baz_data = BAZ_WONT_GO
-        status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        raise InternalServerError(BAZ_WONT_GO)
     return baz_data, status_code, {}

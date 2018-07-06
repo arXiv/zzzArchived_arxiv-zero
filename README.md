@@ -18,12 +18,12 @@ There are multiple ways to run this server:
 ### Docker
 
 1.  Setup [Docker CE using the instructions for your OS](https://docs.docker.com/engine/installation/)
-2.  Build [arxiv-base](https://github.com/cul-it/arxiv-base) 
+2.  Build [arxiv-base](https://github.com/cul-it/arxiv-base)
 (clone repo, then `docker build -t arxiv-base:latest .`) if not using a registry.
     Also note, if not using a registry, you may need to create the tag manually in some docker
     installations or versions: `docker tag built_image_id arxiv-base:latest` (seems to be a docker bug).
-3.  Build the Docker image, which will execute all the commands in the 
-    [`Dockerfile`](https://github.com/cul-it/arxiv-zero/blob/master/Dockerfile): 
+3.  Build the Docker image, which will execute all the commands in the
+    [`Dockerfile`](https://github.com/cul-it/arxiv-zero/blob/master/Dockerfile):
     `docker build -t arxiv-zero .`
 4.  `docker run -p 8000:8000 --name container_name arxiv-zero` (add a `-d` flag
     to run in daemon mode)
@@ -37,14 +37,14 @@ There are multiple ways to run this server:
 #### Clean-up
 
 To purge your container run  `docker rmi arxiv-zero`. If you receive the
-following error, run `docker rm CONTAINER_ID` for each stopped container 
+following error, run `docker rm CONTAINER_ID` for each stopped container
 until it clears:
 
 ```
 $ docker rmi c196c3ef21c7
 Error response from daemon: conflict: unable to delete c196c3ef21c7 (must be
 forced) - image is being used by stopped container 75bb481b5857
-``` 
+```
 
 ### Local Deployment
 
@@ -53,7 +53,7 @@ changes. We assume your developer machine already has a version of Python 3.6
 with `pip`.
 
 1.  `pip install pipenv && pipenv install --dev`
-2.  `pipenv shell` 
+2.  `pipenv shell`
 3.  `FLASK_APP=app.py python populate_test_database.py`
 4.  `FLASK_APP=app.py FLASK_DEBUG=1 flask run`
 5.  Test that the app is working: http://localhost:5000/zero/api/status
@@ -91,8 +91,8 @@ $ FLASK_APP=app.py python populate_test_database.py
 Some example unit tests are provided in [``tests/``](tests/). They are written
 using the built-in [unit-test](https://docs.python.org/3/library/unittest.html)
 framework. **Be sure to change** [``tests/test_mypy.py``](tests/test_mypy.py) to reference
-your python package by change the line `self.pkgname: str = "zero"` to have 
-your package name rather than "zero". 
+your python package by change the line `self.pkgname: str = "zero"` to have
+your package name rather than "zero".
 
 We use the [nose2](http://nose2.readthedocs.io/en/latest/) test runner, with
 coverage. For example:
@@ -186,8 +186,8 @@ pydocstyle --convention=numpy --add-ignore=D401
 Use [type hint annotations](https://docs.python.org/3/library/typing.html)
 wherever practicable. Use [mypy](http://mypy-lang.org/) to check your code.
 If you run across typechecking errors in your code and you have a good reason
-for `mypy` to ignore them, you should be able to add `# type: ignore`, 
-ideally along with an actual comment describing why the type checking should be 
+for `mypy` to ignore them, you should be able to add `# type: ignore`,
+ideally along with an actual comment describing why the type checking should be
 ignored on this line. In cases where it is hoped the types can be specified later,
 just simplying adding the `# type: ignore` without further comment is fine.
 
@@ -224,15 +224,14 @@ are **not** under version control (per ``.gitignore``).
 To build the full documentation for this project:
 
 ```bash
-$ cd <project_root>/docs
-$ make html
+cd <project_root>/docs
+make html SPHINXBUILD=$(pipenv --venv)/bin/sphinx-build
 ```
 
 Point your browser to: ``file:///path/to/arxiv-zero/docs/build/html/index.html``.
 
 There are other build targets available. Run ``make`` without any arguments
 for more info.
-
 
 
 ### Architecture

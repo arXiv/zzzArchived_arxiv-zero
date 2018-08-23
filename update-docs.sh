@@ -9,7 +9,7 @@ make html SPHINXDOCS=$(pipenv --venv)/bin/sphinx-build
 cd $SRCDOCS
 MSG="Adding gh-pages docs for `git log -1 --pretty=short --abbrev-commit`"
 
-TMPREPO=/tmp/docs/topic-explorer/
+TMPREPO=/tmp/docs/$REPO
 rm -rf $TMPREPO
 mkdir -p -m 0755 $TMPREPO
 echo $MSG

@@ -27,6 +27,7 @@ mypy = "*"
 pydocstyle = "*"
 pylint = "*"
 sphinx = "*"
+sphinx-autodoc-typehints = "*"
 
 
 [requires]

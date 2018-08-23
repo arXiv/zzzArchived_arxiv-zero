@@ -22,4 +22,5 @@ cd $TMPREPO
 git checkout gh-pages  ###gh-pages has previously one off been set to be nothing but html
 cp -r $SRCDOCS/* $TMPREPO
 git add -A
-git commit -m "$MSG" ## && git push origin gh-pages
+git commit -m "$MSG"
+git push origin gh-pages

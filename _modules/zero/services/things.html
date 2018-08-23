@@ -35,21 +35,34 @@
   <h1>Source code for zero.services.things</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Provides access to the Things data store.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
-
-<span class="kn">from</span> <span class="nn">werkzeug.local</span> <span class="k">import</span> <span class="n">LocalProxy</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="k">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">DateTime</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.exc</span> <span class="k">import</span> <span class="n">OperationalError</span>
-
+<span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="k">import</span> <span class="n">SQLAlchemy</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">werkzeug.local</span> <span class="k">import</span> <span class="n">LocalProxy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">zero.domain</span> <span class="k">import</span> <span class="n">Thing</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">DBThing</span>
+
+<span class="n">db</span><span class="p">:</span> <span class="n">SQLAlchemy</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="init_app"><a class="viewcode-back" href="../../../api/zero.services.things.html#zero.services.things.init_app">[docs]</a><span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LocalProxy</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="DBThing"><a class="viewcode-back" href="../../../api/zero.services.html#zero.services.things.DBThing">[docs]</a><span class="k">class</span> <span class="nc">DBThing</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Model for things.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;things&#39;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;The unique identifier for a thing.&quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">255</span><span class="p">))</span>
+    <span class="sd">&quot;&quot;&quot;The name of the thing.&quot;&quot;&quot;</span>
+    <span class="n">created</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;The datetime when the thing was created.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="init_app"><a class="viewcode-back" href="../../../api/zero.services.html#zero.services.things.init_app">[docs]</a><span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LocalProxy</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Set configuration defaults and attach session to the application.&quot;&quot;&quot;</span>
     <span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_a_thing"><a class="viewcode-back" href="../../../api/zero.services.things.html#zero.services.things.get_a_thing">[docs]</a><span class="k">def</span> <span class="nf">get_a_thing</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Thing</span><span class="p">]:</span>
+<div class="viewcode-block" id="get_a_thing"><a class="viewcode-back" href="../../../api/zero.services.html#zero.services.things.get_a_thing">[docs]</a><span class="k">def</span> <span class="nf">get_a_thing</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Thing</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get data about a thing.</span>
 
@@ -75,11 +88,11 @@
         <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Could not query database: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="o">.</span><span class="n">detail</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
     <span class="k">if</span> <span class="n">thing_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">return</span> <span class="n">Thing</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">thing_data</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">thing_data</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>    <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="n">Thing</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">thing_data</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">thing_data</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                  <span class="n">created</span><span class="o">=</span><span class="n">thing_data</span><span class="o">.</span><span class="n">created</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="store_a_thing"><a class="viewcode-back" href="../../../api/zero.services.things.html#zero.services.things.store_a_thing">[docs]</a><span class="k">def</span> <span class="nf">store_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">:</span> <span class="n">Thing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thing</span><span class="p">:</span>
+<div class="viewcode-block" id="store_a_thing"><a class="viewcode-back" href="../../../api/zero.services.html#zero.services.things.store_a_thing">[docs]</a><span class="k">def</span> <span class="nf">store_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">:</span> <span class="n">Thing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thing</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a new record for a :class:`.Thing` in the database.</span>
 
@@ -94,7 +107,7 @@
 <span class="sd">    RuntimeError</span>
 <span class="sd">        When there is some other problem.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">thing_data</span> <span class="o">=</span> <span class="n">DBThing</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">the_thing</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">created</span><span class="o">=</span><span class="n">the_thing</span><span class="o">.</span><span class="n">created</span><span class="p">)</span>    <span class="c1"># type: ignore</span>
+    <span class="n">thing_data</span> <span class="o">=</span> <span class="n">DBThing</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">the_thing</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">created</span><span class="o">=</span><span class="n">the_thing</span><span class="o">.</span><span class="n">created</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">thing_data</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
@@ -105,7 +118,7 @@
     <span class="k">return</span> <span class="n">the_thing</span></div>
 
 
-<div class="viewcode-block" id="update_a_thing"><a class="viewcode-back" href="../../../api/zero.services.things.html#zero.services.things.update_a_thing">[docs]</a><span class="k">def</span> <span class="nf">update_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">:</span> <span class="n">Thing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="update_a_thing"><a class="viewcode-back" href="../../../api/zero.services.html#zero.services.things.update_a_thing">[docs]</a><span class="k">def</span> <span class="nf">update_a_thing</span><span class="p">(</span><span class="n">the_thing</span><span class="p">:</span> <span class="n">Thing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Update the database with the latest :class:`.Thing`.</span>
 
@@ -188,7 +201,7 @@
       &copy;2017, Jane Bloggs.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>

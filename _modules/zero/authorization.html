@@ -33,29 +33,36 @@
           <div class="body" role="main">
             
   <h1>Source code for zero.authorization</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A minimal example of scope-based authorization.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;A minimal example of scope-based authorization with JWT.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span>
 <span class="kn">import</span> <span class="nn">jwt</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">Forbidden</span><span class="p">,</span> <span class="n">Unauthorized</span>
 
+<span class="n">INVALID_TOKEN</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid authorization token&#39;</span><span class="p">}</span>
+<span class="n">INVALID_SCOPE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="s1">&#39;Token not authorized for this action&#39;</span><span class="p">}</span>
+<span class="n">HTTP_403_FORBIDDEN</span> <span class="o">=</span> <span class="mi">403</span>
 
-<span class="c1"># TODO: this will be replaced by the arxiv.users package.</span>
-<div class="viewcode-block" id="scoped"><a class="viewcode-back" href="../../api/zero.authorization.html#zero.authorization.scoped">[docs]</a><span class="k">def</span> <span class="nf">scoped</span><span class="p">(</span><span class="n">scope</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="c1">#TODO: many type clarifications needed here</span>
+
+<div class="viewcode-block" id="scoped"><a class="viewcode-back" href="../../api/zero.html#zero.authorization.scoped">[docs]</a><span class="k">def</span> <span class="nf">scoped</span><span class="p">(</span><span class="n">scope</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Generate a decorator to enforce scope authorization.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">protector</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Decorator that provides scope enforcement.&quot;&quot;&quot;</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
             <span class="sd">&quot;&quot;&quot;Check the authorization token before executing the method.&quot;&quot;&quot;</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;auth&#39;</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="n">Unauthorized</span><span class="p">(</span><span class="s1">&#39;Authentication required for this resource&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">scope</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;auth&#39;</span><span class="p">][</span><span class="s1">&#39;scope&#39;</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="n">Forbidden</span><span class="p">(</span><span class="s1">&#39;Insufficient privileges to access resource&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>    <span class="c1"># type: ignore</span>
+            <span class="n">secret</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;JWT_SECRET&#39;</span><span class="p">)</span>
+            <span class="n">encoded</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Authorization&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">decoded</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">,</span> <span class="n">secret</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;HS256&#39;</span><span class="p">])</span>
+            <span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">DecodeError</span><span class="p">:</span> <span class="c1">#type: ignore</span>
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">INVALID_TOKEN</span><span class="p">),</span> <span class="n">HTTP_403_FORBIDDEN</span><span class="p">,</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">scope</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">decoded</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scope&#39;</span><span class="p">):</span> <span class="c1">#type: ignore</span>
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">INVALID_SCOPE</span><span class="p">),</span> <span class="n">HTTP_403_FORBIDDEN</span><span class="p">,</span> <span class="p">{}</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1">#type: ignore</span>
         <span class="k">return</span> <span class="n">wrapper</span>
     <span class="k">return</span> <span class="n">protector</span></div>
 </pre></div>
@@ -111,7 +118,7 @@
       &copy;2017, Jane Bloggs.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>

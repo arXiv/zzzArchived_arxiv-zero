@@ -16,8 +16,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zero.services.tests package" href="zero.services.tests.html" />
-    <link rel="prev" title="zero.routes.ui module" href="zero.routes.ui.html" />
+    <link rel="prev" title="zero.routes package" href="zero.routes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,35 +36,252 @@
   <div class="section" id="module-zero.services">
 <span id="zero-services-package"></span><h1>zero.services package<a class="headerlink" href="#module-zero.services" title="Permalink to this headline">¶</a></h1>
 <p>Provides modules for interacting with external services.</p>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="zero.services.tests.html">zero.services.tests package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="zero.services.tests.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="zero.services.tests.test_foo.html">zero.services.tests.test_foo module</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="zero.services.things.html">zero.services.things package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="zero.services.things.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="zero.services.things.models.html">zero.services.things.models module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="zero.services.things.tests.html">zero.services.things.tests module</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="zero.services.baz.html">zero.services.baz module</a></li>
-</ul>
 </div>
+<div class="section" id="module-zero.services.baz">
+<span id="zero-services-baz-module"></span><h2>zero.services.baz module<a class="headerlink" href="#module-zero.services.baz" title="Permalink to this headline">¶</a></h2>
+<p>The baz service provides data about bazs.</p>
+<dl class="class">
+<dt id="zero.services.baz.BazServiceSession">
+<em class="property">class </em><code class="descclassname">zero.services.baz.</code><code class="descname">BazServiceSession</code><span class="sig-paren">(</span><em>baz_param</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/baz.html#BazServiceSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.baz.BazServiceSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Preserves state re:baz that must persist throughout the request context.</p>
+<p>This could be an HTTP session, database connection, etc.</p>
+<dl class="attribute">
+<dt id="zero.services.baz.BazServiceSession.bazcave">
+<code class="descname">bazcave</code><em class="property"> = 'https://ifconfig.co/json'</em><a class="headerlink" href="#zero.services.baz.BazServiceSession.bazcave" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="zero.services.baz.BazServiceSession.retrieve_baz">
+<code class="descname">retrieve_baz</code><span class="sig-paren">(</span><em>baz_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/baz.html#BazServiceSession.retrieve_baz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.baz.BazServiceSession.retrieve_baz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Go get a baz and bring it back.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>baz_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The PK id of the baz of interest.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="zero.html#zero.domain.Baz" title="zero.domain.Baz"><code class="xref py py-class docutils literal notranslate"><span class="pre">Baz</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IOError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IOError</span></code></a> – If there is a problem getting the baz.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="zero.html#zero.domain.Baz" title="zero.domain.Baz"><code class="xref py py-class docutils literal notranslate"><span class="pre">Baz</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="zero.services.baz.BazServiceSession.status">
+<code class="descname">status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/baz.html#BazServiceSession.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.baz.BazServiceSession.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the availability of the Baz service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.services.baz.current_session">
+<code class="descclassname">zero.services.baz.</code><code class="descname">current_session</code><span class="sig-paren">(</span><em>app=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/baz.html#current_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.baz.current_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current Baz session for this context (if there is one).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">werkzeug.local.LocalProxy</span></code>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#zero.services.baz.BazServiceSession" title="zero.services.baz.BazServiceSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">BazServiceSession</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#zero.services.baz.BazServiceSession" title="zero.services.baz.BazServiceSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">BazServiceSession</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.services.baz.get_session">
+<code class="descclassname">zero.services.baz.</code><code class="descname">get_session</code><span class="sig-paren">(</span><em>app=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/baz.html#get_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.baz.get_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new Baz session.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">werkzeug.local.LocalProxy</span></code>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#zero.services.baz.BazServiceSession" title="zero.services.baz.BazServiceSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">BazServiceSession</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#zero.services.baz.BazServiceSession" title="zero.services.baz.BazServiceSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">BazServiceSession</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.services.baz.init_app">
+<code class="descclassname">zero.services.baz.</code><code class="descname">init_app</code><span class="sig-paren">(</span><em>app=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/baz.html#init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.baz.init_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set required configuration defaults for the application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">werkzeug.local.LocalProxy</span></code>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.services.baz.retrieve_baz">
+<code class="descclassname">zero.services.baz.</code><code class="descname">retrieve_baz</code><span class="sig-paren">(</span><em>self</em>, <em>baz_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/baz.html#retrieve_baz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.baz.retrieve_baz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Go get a baz and bring it back.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>baz_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The PK id of the baz of interest.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="zero.html#zero.domain.Baz" title="zero.domain.Baz"><code class="xref py py-class docutils literal notranslate"><span class="pre">Baz</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IOError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IOError</span></code></a> – If there is a problem getting the baz.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="zero.html#zero.domain.Baz" title="zero.domain.Baz"><code class="xref py py-class docutils literal notranslate"><span class="pre">Baz</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-zero.services.things">
+<span id="zero-services-things-module"></span><h2>zero.services.things module<a class="headerlink" href="#module-zero.services.things" title="Permalink to this headline">¶</a></h2>
+<p>Provides access to the Things data store.</p>
+<dl class="class">
+<dt id="zero.services.things.DBThing">
+<em class="property">class </em><code class="descclassname">zero.services.things.</code><code class="descname">DBThing</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/things.html#DBThing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.things.DBThing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.ext.declarative.api.Model</span></code></p>
+<p>Model for things.</p>
+<dl class="attribute">
+<dt id="zero.services.things.DBThing.created">
+<code class="descname">created</code><a class="headerlink" href="#zero.services.things.DBThing.created" title="Permalink to this definition">¶</a></dt>
+<dd><p>The datetime when the thing was created.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="zero.services.things.DBThing.id">
+<code class="descname">id</code><a class="headerlink" href="#zero.services.things.DBThing.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The unique identifier for a thing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="zero.services.things.DBThing.name">
+<code class="descname">name</code><a class="headerlink" href="#zero.services.things.DBThing.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the thing.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.services.things.get_a_thing">
+<code class="descclassname">zero.services.things.</code><code class="descname">get_a_thing</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/things.html#get_a_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.things.get_a_thing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get data about a thing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Unique identifier for the thing.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Data about the thing.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IOError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IOError</span></code></a> – When there is a problem querying the database.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.services.things.init_app">
+<code class="descclassname">zero.services.things.</code><code class="descname">init_app</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/things.html#init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.things.init_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set configuration defaults and attach session to the application.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.services.things.store_a_thing">
+<code class="descclassname">zero.services.things.</code><code class="descname">store_a_thing</code><span class="sig-paren">(</span><em>the_thing</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/things.html#store_a_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.things.store_a_thing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new record for a <a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a> in the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>the_thing</strong> (<a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>) – </p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IOError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IOError</span></code></a> – When there is a problem querying the database.</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeError</span></code></a> – When there is some other problem.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.services.things.update_a_thing">
+<code class="descclassname">zero.services.things.</code><code class="descname">update_a_thing</code><span class="sig-paren">(</span><em>the_thing</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/services/things.html#update_a_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.services.things.update_a_thing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the database with the latest <a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>the_thing</strong> (<a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>) – </p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IOError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IOError</span></code></a> – When there is a problem querying the database.</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeError</span></code></a> – When there is some other problem.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 
@@ -101,8 +317,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="modules.html">zero</a><ul>
   <li><a href="zero.html">zero package</a><ul>
-      <li>Previous: <a href="zero.routes.ui.html" title="previous chapter">zero.routes.ui module</a></li>
-      <li>Next: <a href="zero.services.tests.html" title="next chapter">zero.services.tests package</a></li>
+      <li>Previous: <a href="zero.routes.html" title="previous chapter">zero.routes package</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -128,7 +343,7 @@
       &copy;2017, Jane Bloggs.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |

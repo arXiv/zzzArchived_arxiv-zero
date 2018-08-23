@@ -65,8 +65,8 @@
             <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span> <span class="c1"># type: ignore </span>
     <span class="k">if</span> <span class="n">flask_app</span><span class="p">:</span>    <span class="c1"># Proxy object; falsey if there is no application context.</span>
         <span class="k">return</span> <span class="n">flask_app</span><span class="o">.</span><span class="n">config</span> <span class="c1"># type: ignore </span>
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span>
-</div>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span></div>
+
 
 <div class="viewcode-block" id="get_application_global"><a class="viewcode-back" href="../../api/zero.html#zero.context.get_application_global">[docs]</a><span class="k">def</span> <span class="nf">get_application_global</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">werkzeug</span><span class="o">.</span><span class="n">local</span><span class="o">.</span><span class="n">LocalProxy</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -78,8 +78,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">g</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">g</span> <span class="c1"># type: ignore </span>
-    <span class="k">return</span> <span class="kc">None</span>
-</pre></div></div>
+    <span class="k">return</span> <span class="kc">None</span></div>
+</pre></div>
 
           </div>
           
@@ -132,7 +132,7 @@
       &copy;2017, Jane Bloggs.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>

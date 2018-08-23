@@ -16,7 +16,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zero.controllers.baz module" href="zero.controllers.baz.html" />
+    <link rel="next" title="zero.routes package" href="zero.routes.html" />
     <link rel="prev" title="zero package" href="zero.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,19 +37,131 @@
   <div class="section" id="module-zero.controllers">
 <span id="zero-controllers-package"></span><h1>zero.controllers package<a class="headerlink" href="#module-zero.controllers" title="Permalink to this headline">¶</a></h1>
 <p>Contains arxiv-zero controller sketches.</p>
-<p>We separate controllers from the Flask-style routes/blueprints to make them
-easier to test. Controllers should not use Flask proxies directly; if something
-in the request or the application context is needed, it should be parameterized
-as part of the controller’s signature.</p>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="zero.controllers.baz.html">zero.controllers.baz module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="zero.controllers.tests.html">zero.controllers.tests module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="zero.controllers.things.html">zero.controllers.things module</a></li>
-</ul>
 </div>
+<div class="section" id="module-zero.controllers.baz">
+<span id="zero-controllers-baz-module"></span><h2>zero.controllers.baz module<a class="headerlink" href="#module-zero.controllers.baz" title="Permalink to this headline">¶</a></h2>
+<p>Handles all baz-related requests.</p>
+<dl class="function">
+<dt id="zero.controllers.baz.get_baz">
+<code class="descclassname">zero.controllers.baz.</code><code class="descname">get_baz</code><span class="sig-paren">(</span><em>baz_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/controllers/baz.html#get_baz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.controllers.baz.get_baz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a baz from the Baz service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>baz_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The unique identifier for the baz in question.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>dict</em> – Some interesting information about the baz.</li>
+<li><em>int</em> – An HTTP status code.</li>
+<li><em>dict</em> – Some extra headers to add to the response.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-zero.controllers.things">
+<span id="zero-controllers-things-module"></span><h2>zero.controllers.things module<a class="headerlink" href="#module-zero.controllers.things" title="Permalink to this headline">¶</a></h2>
+<p>Handles all thing-related requests.</p>
+<dl class="function">
+<dt id="zero.controllers.things.create_a_thing">
+<code class="descclassname">zero.controllers.things.</code><code class="descname">create_a_thing</code><span class="sig-paren">(</span><em>thing_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/controllers/things.html#create_a_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.controllers.things.create_a_thing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new <a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thing_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Data used to create a new <a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>dict</em> – Some data.</li>
+<li><em>int</em> – An HTTP status code.</li>
+<li><em>dict</em> – Some extra headers to add to the response.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.controllers.things.get_thing">
+<code class="descclassname">zero.controllers.things.</code><code class="descname">get_thing</code><span class="sig-paren">(</span><em>thing_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/controllers/things.html#get_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.controllers.things.get_thing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a thing from the Things service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thing_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The unique identifier for the thing in question.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>dict</em> – Some interesting information about the thing.</li>
+<li><em>int</em> – An HTTP status code.</li>
+<li><em>dict</em> – Some extra headers to add to the response.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.controllers.things.mutation_status">
+<code class="descclassname">zero.controllers.things.</code><code class="descname">mutation_status</code><span class="sig-paren">(</span><em>task_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/controllers/things.html#mutation_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.controllers.things.mutation_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the status of a mutation process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>task_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The ID of the mutation task.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>dict</em> – Some data.</li>
+<li><em>int</em> – An HTTP status code.</li>
+<li><em>dict</em> – Some extra headers to add to the response.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="zero.controllers.things.start_mutating_a_thing">
+<code class="descclassname">zero.controllers.things.</code><code class="descname">start_mutating_a_thing</code><span class="sig-paren">(</span><em>thing_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/controllers/things.html#start_mutating_a_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.controllers.things.start_mutating_a_thing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start mutating a <a class="reference internal" href="zero.html#zero.domain.Thing" title="zero.domain.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thing_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>dict</em> – Some data.</li>
+<li><em>int</em> – An HTTP status code.</li>
+<li><em>dict</em> – Some extra headers to add to the response.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 
@@ -86,7 +198,7 @@ as part of the controller’s signature.</p>
   <li><a href="modules.html">zero</a><ul>
   <li><a href="zero.html">zero package</a><ul>
       <li>Previous: <a href="zero.html" title="previous chapter">zero package</a></li>
-      <li>Next: <a href="zero.controllers.baz.html" title="next chapter">zero.controllers.baz module</a></li>
+      <li>Next: <a href="zero.routes.html" title="next chapter">zero.routes package</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -112,7 +224,7 @@ as part of the controller’s signature.</p>
       &copy;2017, Jane Bloggs.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |

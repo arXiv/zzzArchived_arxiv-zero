@@ -35,17 +35,18 @@
   <h1>Source code for zero.controllers.baz</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Handles all baz-related requests.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">NotFound</span><span class="p">,</span> <span class="n">InternalServerError</span>
-<span class="kn">from</span> <span class="nn">arxiv</span> <span class="k">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">zero</span> <span class="k">import</span> <span class="n">status</span>
 <span class="kn">from</span> <span class="nn">zero.services</span> <span class="k">import</span> <span class="n">baz</span>
 <span class="kn">from</span> <span class="nn">zero.domain</span> <span class="k">import</span> <span class="n">Baz</span>
 
-<span class="n">NO_BAZ</span> <span class="o">=</span> <span class="s1">&#39;could not find the baz&#39;</span>
-<span class="n">BAZ_WONT_GO</span> <span class="o">=</span> <span class="s1">&#39;could not get the baz&#39;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span>
+
+<span class="n">NO_BAZ</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="s1">&#39;could not find the baz&#39;</span><span class="p">}</span>
+<span class="n">BAZ_WONT_GO</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="s1">&#39;could not get the baz&#39;</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="get_baz"><a class="viewcode-back" href="../../../api/zero.controllers.baz.html#zero.controllers.baz.get_baz">[docs]</a><span class="k">def</span> <span class="nf">get_baz</span><span class="p">(</span><span class="n">baz_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<div class="viewcode-block" id="get_baz"><a class="viewcode-back" href="../../../api/zero.controllers.html#zero.controllers.baz.get_baz">[docs]</a><span class="k">def</span> <span class="nf">get_baz</span><span class="p">(</span><span class="n">baz_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve a baz from the Baz service.</span>
 
@@ -63,16 +64,17 @@
 <span class="sd">    dict</span>
 <span class="sd">        Some extra headers to add to the response.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">baz_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">the_baz</span><span class="p">:</span> <span class="n">Baz</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">retrieve_baz</span><span class="p">(</span><span class="n">baz_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">the_baz</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">NotFound</span><span class="p">(</span><span class="n">NO_BAZ</span><span class="p">)</span>
+            <span class="n">status_code</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+            <span class="n">baz_data</span> <span class="o">=</span> <span class="n">NO_BAZ</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">status_code</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span>
             <span class="n">baz_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="n">the_baz</span><span class="o">.</span><span class="n">foo</span><span class="p">,</span> <span class="s1">&#39;mukluk&#39;</span><span class="p">:</span> <span class="n">the_baz</span><span class="o">.</span><span class="n">mukluk</span><span class="p">}</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">InternalServerError</span><span class="p">(</span><span class="n">BAZ_WONT_GO</span><span class="p">)</span>
+        <span class="n">baz_data</span> <span class="o">=</span> <span class="n">BAZ_WONT_GO</span>
+        <span class="n">status_code</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span>
     <span class="k">return</span> <span class="n">baz_data</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="p">{}</span></div>
 </pre></div>
 
@@ -127,7 +129,7 @@
       &copy;2017, Jane Bloggs.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>

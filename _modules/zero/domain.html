@@ -33,28 +33,88 @@
           <div class="body" role="main">
             
   <h1>Source code for zero.domain</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Describes the data that will be passed around inside of this service.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Describes the data that will be passed around inside of the service.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="k">import</span> <span class="n">asdict</span> <span class="k">as</span> <span class="n">_asdict</span>
+
+<div class="viewcode-block" id="Property"><a class="viewcode-back" href="../../api/zero.html#zero.domain.Property">[docs]</a><span class="k">class</span> <span class="nc">Property</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Describes a named, typed property on a data structure.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">klass</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set the name, type, and default value for the property.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">klass</span> <span class="o">=</span> <span class="n">klass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">owner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the value of property from the data instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        instance : object</span>
+<span class="sd">            The data structure instance on which the property is set.</span>
+<span class="sd">        owner : type</span>
+<span class="sd">            The class/type of ``instance``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        object</span>
+<span class="sd">            If the data structure is instantiated, returns the value of this</span>
+<span class="sd">            property. Otherwise returns this :class:`.Property` instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">instance</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+            <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the value of the property on the data instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        instance : object</span>
+<span class="sd">            The data structure instance on which the property is set.</span>
+<span class="sd">        value : object</span>
+<span class="sd">            The value to which the property should be set.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            Raised when ``value`` is not an instance of the specified type</span>
+<span class="sd">            for the property.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must be an </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
 
 
-<div class="viewcode-block" id="Baz"><a class="viewcode-back" href="../../api/zero.domain.html#zero.domain.Baz">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Baz</span><span class="p">:</span>
+<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../api/zero.html#zero.domain.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for data domain classes.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize with some data.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">key</span><span class="p">),</span> <span class="n">Property</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Baz"><a class="viewcode-back" href="../../api/zero.html#zero.domain.Baz">[docs]</a><span class="k">class</span> <span class="nc">Baz</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Baz est ut mi semper mattis non eget tellus.&quot;&quot;&quot;</span>
 
-    <span class="n">foo</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="sd">&quot;&quot;&quot;Foo a tellus sit amet purus pharetra gravida vulputate ut purus.&quot;&quot;&quot;</span>
 
-    <span class="n">mukluk</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">mukluk</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="s1">&#39;mukluk&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
     <span class="sd">&quot;&quot;&quot;A soft boot, traditionally made of reindeer skin or sealskin.&quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="Thing"><a class="viewcode-back" href="../../api/zero.domain.html#zero.domain.Thing">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Thing</span><span class="p">:</span>
+<div class="viewcode-block" id="Thing"><a class="viewcode-back" href="../../api/zero.html#zero.domain.Thing">[docs]</a><span class="k">class</span> <span class="nc">Thing</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A thing in itself.</span>
 
@@ -69,7 +129,8 @@
 <span class="sd">    an intervening space and then beyond that sees the fixed object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A thing that stands in for the object in the mind.</span>
 
@@ -79,9 +140,7 @@
 <span class="sd">    except insofar as it serves as a term for or representative of the object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="n">created</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+    <span class="n">created</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="s1">&#39;created&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="p">)</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Being is dynamic.</span>
 
@@ -141,7 +200,7 @@
       &copy;2017, Jane Bloggs.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>

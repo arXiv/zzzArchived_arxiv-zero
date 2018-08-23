@@ -70,9 +70,6 @@ to the Flask application upon instantiation.
   - :func:`.routes.external_api.read_baz`
   - :func:`.routes.external_api.read_thing`
 
-
-.. _controllers:
-
 Controllers
 """""""""""
 Controller modules are the primary point of control for application execution.
@@ -150,20 +147,6 @@ To facilitate testing, process modules should generally be framework-agnostic.
 Process modules are imported and used by the controller modules.
 
 * :mod:`.process.mutate`
-
-Exceptions
-""""""""""
-We use the HTTP exceptions defined in :mod:`werkzeug.exceptions` to trigger
-responses >= 400. These exceptions should be raised in :ref:`controllers`.
-
-The ``arxiv.base`` package attaches a set of default error handlers to the
-Flask application. These render some lovely templates, using the error
-description (the message passed when the exception is raised). Those handlers
-can be overridden by defining custom error handlers on each blueprint in the
-application.
-
-For examples of how this can be done for UI and API views, see
-:mod:`zero.routes.ui` and :mod:`zero.routes.external_api`, respectively.
 
 
 Static Files & Templates

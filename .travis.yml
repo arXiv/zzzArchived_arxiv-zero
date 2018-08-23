@@ -12,12 +12,7 @@ script:
   - pipenv install --dev
   - # ./lintstats.sh
   - # ./tests/docker_tests.sh
-  - pipenv run nose2
+  - # pipenv run nose2
 after_success:
-  - coveralls
-deploy:
-  provider: script
-  script: update-docs.sh
-  skip_cleanup: true
-  on:
-    branch: task/ARXIVNG-1113
+  - # coveralls
+  - ./update-docs.sh

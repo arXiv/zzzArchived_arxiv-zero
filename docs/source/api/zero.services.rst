@@ -1,28 +1,23 @@
-zero\.services package
-======================
+zero.services package
+=====================
 
 .. automodule:: zero.services
     :members:
     :undoc-members:
     :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+    zero.services.tests
+    zero.services.things
+
 Submodules
 ----------
 
-zero\.services\.baz module
---------------------------
+.. toctree::
 
-.. automodule:: zero.services.baz
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-zero\.services\.things module
------------------------------
-
-.. automodule:: zero.services.things
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   zero.services.baz
 

@@ -1,4 +1,4 @@
-"""Provides functions that mutate :class:`.Thing`s."""
+"""Provides functions that mutate :class:`.Thing` instances."""
 
 import random
 from zero.domain import Thing

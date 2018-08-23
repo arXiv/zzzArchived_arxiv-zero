@@ -125,7 +125,7 @@ def start_mutating_a_thing(thing_id: int) -> Response:
     result = mutate_a_thing.delay(thing_id)
     headers = {'Location': url_for('external_api.mutation_status',
                                    task_id=result.task_id)}
-    return ACCEPTED, status.HTTP_202_ACCEPTED, headers
+    return {'reason': ACCEPTED}, status.HTTP_202_ACCEPTED, headers
 
 
 def mutation_status(task_id: str) -> Response:

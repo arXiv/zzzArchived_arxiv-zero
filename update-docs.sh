@@ -17,7 +17,7 @@ rm -rf $TMPREPO
 mkdir -p -m 0755 $TMPREPO
 echo $MSG
 
-git clone git@github.com:$REPO.git $TMPREPO
+git clone https://$USERNAME:$GITHUB_TOKEN@github.com/$REPO.git $TMPREPO
 cd $TMPREPO
 git checkout gh-pages  ###gh-pages has previously one off been set to be nothing but html
 cp -r $SRCDOCS/* $TMPREPO

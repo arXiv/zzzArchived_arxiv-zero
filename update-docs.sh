@@ -7,7 +7,7 @@ SRCDOCS=`pwd`/docs/build/html
 echo $SRCDOCS
 
 cd `pwd`/docs
-make html SPHINXDOCS=$(pipenv --venv)/bin/sphinx-build
+make html SPHINXBUILD=$(pipenv --venv)/bin/sphinx-build
 
 cd $SRCDOCS
 MSG="Adding gh-pages docs for `git log -1 --pretty=short --abbrev-commit`"

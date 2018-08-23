@@ -26,6 +26,7 @@ mypy = "*"
 "nose2" = "*"
 pydocstyle = "*"
 pylint = "*"
+sphinx = "*"
 
 
 [requires]

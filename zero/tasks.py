@@ -23,7 +23,7 @@ def mutate_a_thing(thing_id: int, with_sleep: int = 5) -> Dict[str, Any]:
     Returns
     -------
     int
-        The number of characters in :prop:`.Thing.name` after mutation.
+        The number of characters in :attr:`.Thing.name` after mutation.
     """
     a_thing: Optional[Thing] = things.get_a_thing(thing_id)
     if a_thing is None:

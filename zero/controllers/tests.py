@@ -3,6 +3,7 @@
 from unittest import TestCase, mock
 from datetime import datetime
 from typing import Any
+from werkzeug.exceptions import NotFound, BadRequest, InternalServerError
 from zero.factory import create_web_app
 from zero.domain import Baz, Thing
 from zero.controllers import baz, things
@@ -24,15 +25,15 @@ class TestBazController(TestCase):
         self.assertEqual(status_code, 200)
 
         mock_retrieve_baz.return_value = None
-        response_data, status_code, headers = baz.get_baz(1)
-        self.assertEqual(status_code, 404)
+        with self.assertRaises(NotFound):
+            baz.get_baz(1)
 
     @mock.patch('zero.services.baz.retrieve_baz')
     def test_baz_service_chokes(self, mock_retrieve_baz: Any) -> None:
         """If the :mod:`.services.baz` chokes, returns 500."""
         mock_retrieve_baz.side_effect = IOError
-        response_data, status_code, headers = baz.get_baz(1)
-        self.assertEqual(status_code, 500)
+        with self.assertRaises(InternalServerError):
+            baz.get_baz(1)
 
 
 class TestThingController(TestCase):
@@ -58,15 +59,16 @@ class TestThingController(TestCase):
         self.assertEqual(status_code, 200)
 
         mock_get_a_thing.return_value = None
-        response_data, status_code, headers = things.get_thing(5)
-        self.assertEqual(status_code, 404)
+
+        with self.assertRaises(NotFound):
+            things.get_thing(5)
 
     @mock.patch('zero.services.things.get_a_thing')
     def test_things_service_chokes(self, mock_get_a_thing: Any) -> None:
         """If the :mod:`.services.baz` chokes, returns 500."""
         mock_get_a_thing.side_effect = IOError
-        response_data, status_code, headers = things.get_thing(5)
-        self.assertEqual(status_code, 500)
+        with self.assertRaises(InternalServerError):
+            things.get_thing(5)
 
     @mock.patch('zero.services.things.store_a_thing')
     def test_create_a_thing(self, mock_store_a_thing: Any) -> None:

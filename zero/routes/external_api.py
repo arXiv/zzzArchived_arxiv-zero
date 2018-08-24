@@ -1,8 +1,17 @@
-"""Provides routes for the external API."""
+"""
+Provides routes for the external API.
+
+We also define some custom error handlers here. Since this is a JSON API, we
+want our exception handlers to return JSON rather than the default template
+rendering provided by ``arxiv.base``. See :func:`handle_exception`.
+"""
 
 from flask.json import jsonify
-from flask import Blueprint, render_template, redirect, request, url_for
-from zero import status, authorization
+from flask import Blueprint, request, Response, make_response
+from werkzeug.exceptions import NotFound, Forbidden, Unauthorized, \
+    InternalServerError, HTTPException, BadRequest
+from arxiv import status
+from zero import authorization
 from zero.controllers import baz, things
 
 blueprint = Blueprint('external_api', __name__, url_prefix='/zero/api')
@@ -52,3 +61,27 @@ def mutation_status(task_id: str) -> tuple:
     """Get the status of the mutation task."""
     data, status_code, headers = things.mutation_status(task_id)
     return jsonify(data), status_code, headers
+
+
+# Here's where we register exception handlers.
+
+@blueprint.errorhandler(NotFound)
+@blueprint.errorhandler(InternalServerError)
+@blueprint.errorhandler(Forbidden)
+@blueprint.errorhandler(Unauthorized)
+@blueprint.errorhandler(BadRequest)
+def handle_exception(error: HTTPException) -> Response:
+    """
+    JSON-ify the error response.
+
+    This works just like the handlers in zero.routes.ui, but instead of
+    rendering a template we are JSON-ifying the response. Note that we are
+    registering the same error handler for several different exceptions, since
+    we aren't doing anything that is specific to a particular exception.
+    """
+    content = jsonify({'reason': error.description})
+
+    # Each Werkzeug HTTP exception has a class attribute called ``code``; we
+    # can use that to set the status code on the response.
+    response = make_response(content, error.code)
+    return response

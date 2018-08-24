@@ -182,5 +182,7 @@ texinfo_documents = [
 ]
 
 
-
-intersphinx_mapping = {'https://docs.python.org/3/': None}
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3/', None),
+    'werkzeug': ('http://werkzeug.pocoo.org/docs/0.14/', None)
+}

@@ -9,6 +9,7 @@ name = "pypi"
 
 arxiv-base = "*"
 celery = "*"
+dataclasses = "*"
 flask = "*"
 flask-sqlalchemy = "*"
 jsonschema = "*"

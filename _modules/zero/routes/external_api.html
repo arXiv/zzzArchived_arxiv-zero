@@ -33,30 +33,39 @@
           <div class="body" role="main">
             
   <h1>Source code for zero.routes.external_api</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Provides routes for the external API.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Provides routes for the external API.</span>
+
+<span class="sd">We also define some custom error handlers here. Since this is a JSON API, we</span>
+<span class="sd">want our exception handlers to return JSON rather than the default template</span>
+<span class="sd">rendering provided by ``arxiv.base``. See :func:`handle_exception`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">flask.json</span> <span class="k">import</span> <span class="n">jsonify</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">url_for</span>
-<span class="kn">from</span> <span class="nn">zero</span> <span class="k">import</span> <span class="n">status</span><span class="p">,</span> <span class="n">authorization</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">make_response</span>
+<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">NotFound</span><span class="p">,</span> <span class="n">Forbidden</span><span class="p">,</span> <span class="n">Unauthorized</span><span class="p">,</span> \
+    <span class="n">InternalServerError</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">BadRequest</span>
+<span class="kn">from</span> <span class="nn">arxiv</span> <span class="k">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">zero</span> <span class="k">import</span> <span class="n">authorization</span>
 <span class="kn">from</span> <span class="nn">zero.controllers</span> <span class="k">import</span> <span class="n">baz</span><span class="p">,</span> <span class="n">things</span>
 
 <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;external_api&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/zero/api&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="ok"><a class="viewcode-back" href="../../../api/zero.routes.html#zero.routes.external_api.ok">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/status&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="ok"><a class="viewcode-back" href="../../../api/zero.routes.external_api.html#zero.routes.external_api.ok">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/status&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">ok</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Health check endpoint.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;nobody but us hamsters&#39;</span><span class="p">}),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
 
 
-<div class="viewcode-block" id="read_baz"><a class="viewcode-back" href="../../../api/zero.routes.html#zero.routes.external_api.read_baz">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/baz/&lt;int:baz_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="read_baz"><a class="viewcode-back" href="../../../api/zero.routes.external_api.html#zero.routes.external_api.read_baz">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/baz/&lt;int:baz_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">read_baz</span><span class="p">(</span><span class="n">baz_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Provide some data about the baz.&quot;&quot;&quot;</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">baz</span><span class="o">.</span><span class="n">get_baz</span><span class="p">(</span><span class="n">baz_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span></div>
 
 
-<div class="viewcode-block" id="read_thing"><a class="viewcode-back" href="../../../api/zero.routes.html#zero.routes.external_api.read_thing">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/thing/&lt;int:thing_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="read_thing"><a class="viewcode-back" href="../../../api/zero.routes.external_api.html#zero.routes.external_api.read_thing">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/thing/&lt;int:thing_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
 <span class="nd">@authorization</span><span class="o">.</span><span class="n">scoped</span><span class="p">(</span><span class="s1">&#39;read:thing&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">read_thing</span><span class="p">(</span><span class="n">thing_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Provide some data about the thing.&quot;&quot;&quot;</span>
@@ -64,7 +73,7 @@
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span></div>
 
 
-<div class="viewcode-block" id="create_thing"><a class="viewcode-back" href="../../../api/zero.routes.html#zero.routes.external_api.create_thing">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/thing&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="create_thing"><a class="viewcode-back" href="../../../api/zero.routes.external_api.html#zero.routes.external_api.create_thing">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/thing&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="nd">@authorization</span><span class="o">.</span><span class="n">scoped</span><span class="p">(</span><span class="s1">&#39;write:thing&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">create_thing</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a new thing.&quot;&quot;&quot;</span>
@@ -73,7 +82,7 @@
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span></div>
 
 
-<div class="viewcode-block" id="mutate_thing"><a class="viewcode-back" href="../../../api/zero.routes.html#zero.routes.external_api.mutate_thing">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/thing/&lt;int:thing_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="mutate_thing"><a class="viewcode-back" href="../../../api/zero.routes.external_api.html#zero.routes.external_api.mutate_thing">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/thing/&lt;int:thing_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="nd">@authorization</span><span class="o">.</span><span class="n">scoped</span><span class="p">(</span><span class="s1">&#39;write:thing&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">mutate_thing</span><span class="p">(</span><span class="n">thing_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Request that the thing be mutated.&quot;&quot;&quot;</span>
@@ -81,12 +90,36 @@
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span></div>
 
 
-<div class="viewcode-block" id="mutation_status"><a class="viewcode-back" href="../../../api/zero.routes.html#zero.routes.external_api.mutation_status">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/mutation/&lt;string:task_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="mutation_status"><a class="viewcode-back" href="../../../api/zero.routes.external_api.html#zero.routes.external_api.mutation_status">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/mutation/&lt;string:task_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
 <span class="nd">@authorization</span><span class="o">.</span><span class="n">scoped</span><span class="p">(</span><span class="s1">&#39;write:thing&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">mutation_status</span><span class="p">(</span><span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Get the status of the mutation task.&quot;&quot;&quot;</span>
     <span class="n">data</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">things</span><span class="o">.</span><span class="n">mutation_status</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span></div>
+
+
+<span class="c1"># Here&#39;s where we register exception handlers.</span>
+
+<div class="viewcode-block" id="handle_exception"><a class="viewcode-back" href="../../../api/zero.routes.external_api.html#zero.routes.external_api.handle_exception">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">NotFound</span><span class="p">)</span>
+<span class="nd">@blueprint</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">InternalServerError</span><span class="p">)</span>
+<span class="nd">@blueprint</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">Forbidden</span><span class="p">)</span>
+<span class="nd">@blueprint</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">Unauthorized</span><span class="p">)</span>
+<span class="nd">@blueprint</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">BadRequest</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">handle_exception</span><span class="p">(</span><span class="n">error</span><span class="p">:</span> <span class="n">HTTPException</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    JSON-ify the error response.</span>
+
+<span class="sd">    This works just like the handlers in zero.routes.ui, but instead of</span>
+<span class="sd">    rendering a template we are JSON-ifying the response. Note that we are</span>
+<span class="sd">    registering the same error handler for several different exceptions, since</span>
+<span class="sd">    we aren&#39;t doing anything that is specific to a particular exception.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="n">error</span><span class="o">.</span><span class="n">description</span><span class="p">})</span>
+
+    <span class="c1"># Each Werkzeug HTTP exception has a class attribute called ``code``; we</span>
+    <span class="c1"># can use that to set the status code on the response.</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">error</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span></div>
 </pre></div>
 
           </div>

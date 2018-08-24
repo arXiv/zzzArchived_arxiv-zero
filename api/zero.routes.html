@@ -16,8 +16,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="zero.services package" href="zero.services.html" />
-    <link rel="prev" title="zero.controllers package" href="zero.controllers.html" />
+    <link rel="next" title="zero.routes.tests package" href="zero.routes.tests.html" />
+    <link rel="prev" title="zero.process.tests module" href="zero.process.tests.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,129 +36,39 @@
             
   <div class="section" id="module-zero.routes">
 <span id="zero-routes-package"></span><h1>zero.routes package<a class="headerlink" href="#module-zero.routes" title="Permalink to this headline">¶</a></h1>
-<p>Contains route information for arxiv-zero.</p>
+<p>Routes provide the glue between Flask and application <a class="reference internal" href="zero.controllers.html#module-zero.controllers" title="zero.controllers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">controllers</span></code></a>.</p>
+<p>Separate routes modules can be used to provide distinct interfaces, e.g. to
+differentiate user-facing routes that return HTML from external APIs exposed
+via the  arXiv API gateway. Each module should provide a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">flask.Blueprint</span></code> that defines the routes exposed by that interface.</p>
+<p>This is where request information is obtained from Flask proxy objects,
+and where response data is serialized/rendered for return to the client.</p>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="zero.routes.tests.html">zero.routes.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="zero.routes.tests.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="zero.routes.tests.test_external_api.html">zero.routes.tests.test_external_api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zero.routes.tests.test_ui.html">zero.routes.tests.test_ui module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="zero.routes.external_api.html">zero.routes.external_api module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zero.routes.ui.html">zero.routes.ui module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="zero.routes.ui.html#exception-handling">Exception handling</a></li>
+</ul>
+</li>
+</ul>
 </div>
-<div class="section" id="module-zero.routes.external_api">
-<span id="zero-routes-external-api-module"></span><h2>zero.routes.external_api module<a class="headerlink" href="#module-zero.routes.external_api" title="Permalink to this headline">¶</a></h2>
-<p>Provides routes for the external API.</p>
-<dl class="function">
-<dt id="zero.routes.external_api.create_thing">
-<code class="descclassname">zero.routes.external_api.</code><code class="descname">create_thing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/routes/external_api.html#create_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.routes.external_api.create_thing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new thing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="zero.routes.external_api.mutate_thing">
-<code class="descclassname">zero.routes.external_api.</code><code class="descname">mutate_thing</code><span class="sig-paren">(</span><em>thing_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/routes/external_api.html#mutate_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.routes.external_api.mutate_thing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Request that the thing be mutated.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="zero.routes.external_api.mutation_status">
-<code class="descclassname">zero.routes.external_api.</code><code class="descname">mutation_status</code><span class="sig-paren">(</span><em>task_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/routes/external_api.html#mutation_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.routes.external_api.mutation_status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the status of the mutation task.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="zero.routes.external_api.ok">
-<code class="descclassname">zero.routes.external_api.</code><code class="descname">ok</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/routes/external_api.html#ok"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.routes.external_api.ok" title="Permalink to this definition">¶</a></dt>
-<dd><p>Health check endpoint.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="zero.routes.external_api.read_baz">
-<code class="descclassname">zero.routes.external_api.</code><code class="descname">read_baz</code><span class="sig-paren">(</span><em>baz_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/routes/external_api.html#read_baz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.routes.external_api.read_baz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide some data about the baz.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="zero.routes.external_api.read_thing">
-<code class="descclassname">zero.routes.external_api.</code><code class="descname">read_thing</code><span class="sig-paren">(</span><em>thing_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/routes/external_api.html#read_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.routes.external_api.read_thing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide some data about the thing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-zero.routes.ui">
-<span id="zero-routes-ui-module"></span><h2>zero.routes.ui module<a class="headerlink" href="#module-zero.routes.ui" title="Permalink to this headline">¶</a></h2>
-<p>Provides routes for the external user interface.</p>
-<dl class="function">
-<dt id="zero.routes.ui.read_baz">
-<code class="descclassname">zero.routes.ui.</code><code class="descname">read_baz</code><span class="sig-paren">(</span><em>baz_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/routes/ui.html#read_baz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.routes.ui.read_baz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide some data about the baz.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="zero.routes.ui.read_thing">
-<code class="descclassname">zero.routes.ui.</code><code class="descname">read_thing</code><span class="sig-paren">(</span><em>thing_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zero/routes/ui.html#read_thing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zero.routes.ui.read_thing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide some data about the thing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
 </div>
 
@@ -194,8 +104,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="modules.html">zero</a><ul>
   <li><a href="zero.html">zero package</a><ul>
-      <li>Previous: <a href="zero.controllers.html" title="previous chapter">zero.controllers package</a></li>
-      <li>Next: <a href="zero.services.html" title="next chapter">zero.services package</a></li>
+      <li>Previous: <a href="zero.process.tests.html" title="previous chapter">zero.process.tests module</a></li>
+      <li>Next: <a href="zero.routes.tests.html" title="next chapter">zero.routes.tests package</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

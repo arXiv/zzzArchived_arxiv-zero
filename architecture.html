@@ -81,7 +81,7 @@ the API gateway.</p>
 <p>The primary entrypoint for the arXiv Zero service is a Web Server Gateway
 Interface application provided by <code class="docutils literal notranslate"><span class="pre">wsgi.py</span></code> in the root of the project
 (outside of the <code class="docutils literal notranslate"><span class="pre">zero</span></code> package). The WSGI module relies on an application
-factory in the <a class="reference internal" href="api/zero.html#module-zero.factory" title="zero.factory"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factory</span></code></a> module, which is responsible for instantiating
+factory in the <a class="reference internal" href="api/zero.factory.html#module-zero.factory" title="zero.factory"><code class="xref py py-mod docutils literal notranslate"><span class="pre">factory</span></code></a> module, which is responsible for instantiating
 and configuring a Flask application instance upon each HTTP request.</p>
 </div>
 <div class="section" id="routes">
@@ -94,15 +94,15 @@ provides a <a class="reference external" href="http://flask.pocoo.org/docs/0.12/
 that describes the HTTP routes available. That blueprint object is attached
 to the Flask application upon instantiation.</p>
 <ul class="simple">
-<li><a class="reference internal" href="api/zero.routes.html#module-zero.routes.external_api" title="zero.routes.external_api"><code class="xref py py-mod docutils literal notranslate"><span class="pre">routes.external_api</span></code></a><ul>
-<li><a class="reference internal" href="api/zero.routes.html#zero.routes.external_api.read_baz" title="zero.routes.external_api.read_baz"><code class="xref py py-func docutils literal notranslate"><span class="pre">routes.external_api.read_baz()</span></code></a></li>
-<li><a class="reference internal" href="api/zero.routes.html#zero.routes.external_api.read_thing" title="zero.routes.external_api.read_thing"><code class="xref py py-func docutils literal notranslate"><span class="pre">routes.external_api.read_thing()</span></code></a></li>
+<li><a class="reference internal" href="api/zero.routes.external_api.html#module-zero.routes.external_api" title="zero.routes.external_api"><code class="xref py py-mod docutils literal notranslate"><span class="pre">routes.external_api</span></code></a><ul>
+<li><a class="reference internal" href="api/zero.routes.external_api.html#zero.routes.external_api.read_baz" title="zero.routes.external_api.read_baz"><code class="xref py py-func docutils literal notranslate"><span class="pre">routes.external_api.read_baz()</span></code></a></li>
+<li><a class="reference internal" href="api/zero.routes.external_api.html#zero.routes.external_api.read_thing" title="zero.routes.external_api.read_thing"><code class="xref py py-func docutils literal notranslate"><span class="pre">routes.external_api.read_thing()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="controllers">
-<h4>Controllers<a class="headerlink" href="#controllers" title="Permalink to this headline">¶</a></h4>
+<span id="id1"></span><h4>Controllers<a class="headerlink" href="#controllers" title="Permalink to this headline">¶</a></h4>
 <p>Controller modules are the primary point of control for application execution.
 These modules orchestrate processing in response to request data, utilizing the
 functionality provided by the process and services modules, and generating a
@@ -116,8 +116,8 @@ taking care not to undermine isolation for unit-testing. The Flask <code class="
 proxy object, however, should not be used directly here; interaction with the
 client request is the responsibility of the routes modules.</p>
 <ul class="simple">
-<li><a class="reference internal" href="api/zero.controllers.html#module-zero.controllers.baz" title="zero.controllers.baz"><code class="xref py py-mod docutils literal notranslate"><span class="pre">controllers.baz</span></code></a></li>
-<li><a class="reference internal" href="api/zero.controllers.html#module-zero.controllers.things" title="zero.controllers.things"><code class="xref py py-mod docutils literal notranslate"><span class="pre">controllers.things</span></code></a></li>
+<li><a class="reference internal" href="api/zero.controllers.baz.html#module-zero.controllers.baz" title="zero.controllers.baz"><code class="xref py py-mod docutils literal notranslate"><span class="pre">controllers.baz</span></code></a></li>
+<li><a class="reference internal" href="api/zero.controllers.things.html#module-zero.controllers.things" title="zero.controllers.things"><code class="xref py py-mod docutils literal notranslate"><span class="pre">controllers.things</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="data-domain">
@@ -137,7 +137,7 @@ data inside of the service. Importantly, these modules <strong>do not</strong> i
 business logic, nor are they concerned with persistence. Those concerns are
 left to the process and services modules.</p>
 <ul class="simple">
-<li><a class="reference internal" href="api/zero.html#module-zero.domain" title="zero.domain"><code class="xref py py-mod docutils literal notranslate"><span class="pre">domain</span></code></a></li>
+<li><a class="reference internal" href="api/zero.domain.html#module-zero.domain" title="zero.domain"><code class="xref py py-mod docutils literal notranslate"><span class="pre">domain</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="services">
@@ -156,8 +156,8 @@ service (e.g. to retrieve or update data). These service modules are used by
 the controllers to coordinate interaction with external services on the basis
 of client requests.</p>
 <ul class="simple">
-<li><a class="reference internal" href="api/zero.services.html#module-zero.services.baz" title="zero.services.baz"><code class="xref py py-mod docutils literal notranslate"><span class="pre">services.baz</span></code></a></li>
-<li><a class="reference internal" href="api/zero.services.html#module-zero.services.things" title="zero.services.things"><code class="xref py py-mod docutils literal notranslate"><span class="pre">services.things</span></code></a></li>
+<li><a class="reference internal" href="api/zero.services.baz.html#module-zero.services.baz" title="zero.services.baz"><code class="xref py py-mod docutils literal notranslate"><span class="pre">services.baz</span></code></a></li>
+<li><a class="reference internal" href="api/zero.services.things.html#module-zero.services.things" title="zero.services.things"><code class="xref py py-mod docutils literal notranslate"><span class="pre">services.things</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="process-modules">
@@ -171,8 +171,20 @@ data domain modules.</p>
 <p>To facilitate testing, process modules should generally be framework-agnostic.
 Process modules are imported and used by the controller modules.</p>
 <ul class="simple">
-<li><code class="xref py py-mod docutils literal notranslate"><span class="pre">process.mutate</span></code></li>
+<li><a class="reference internal" href="api/zero.process.mutate.html#module-zero.process.mutate" title="zero.process.mutate"><code class="xref py py-mod docutils literal notranslate"><span class="pre">process.mutate</span></code></a></li>
 </ul>
+</div>
+<div class="section" id="exceptions">
+<h4>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h4>
+<p>We use the HTTP exceptions defined in <a class="reference external" href="http://werkzeug.pocoo.org/docs/0.14/exceptions/#module-werkzeug.exceptions" title="(in Werkzeug v0.14)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">werkzeug.exceptions</span></code></a> to trigger
+responses &gt;= 400. These exceptions should be raised in <a class="reference internal" href="#controllers"><span class="std std-ref">Controllers</span></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">arxiv.base</span></code> package attaches a set of default error handlers to the
+Flask application. These render some lovely templates, using the error
+description (the message passed when the exception is raised). Those handlers
+can be overridden by defining custom error handlers on each blueprint in the
+application.</p>
+<p>For examples of how this can be done for UI and API views, see
+<a class="reference internal" href="api/zero.routes.ui.html#module-zero.routes.ui" title="zero.routes.ui"><code class="xref py py-mod docutils literal notranslate"><span class="pre">zero.routes.ui</span></code></a> and <a class="reference internal" href="api/zero.routes.external_api.html#module-zero.routes.external_api" title="zero.routes.external_api"><code class="xref py py-mod docutils literal notranslate"><span class="pre">zero.routes.external_api</span></code></a>, respectively.</p>
 </div>
 <div class="section" id="static-files-templates">
 <h4>Static Files &amp; Templates<a class="headerlink" href="#static-files-templates" title="Permalink to this headline">¶</a></h4>

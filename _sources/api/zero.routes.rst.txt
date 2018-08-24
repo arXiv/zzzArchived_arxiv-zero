@@ -1,28 +1,23 @@
-zero\.routes package
-====================
+zero.routes package
+===================
 
 .. automodule:: zero.routes
     :members:
     :undoc-members:
     :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+    zero.routes.tests
+
 Submodules
 ----------
 
-zero\.routes\.external\_api module
-----------------------------------
+.. toctree::
 
-.. automodule:: zero.routes.external_api
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-zero\.routes\.ui module
------------------------
-
-.. automodule:: zero.routes.ui
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   zero.routes.external_api
+   zero.routes.ui
 

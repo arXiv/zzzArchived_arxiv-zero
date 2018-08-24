@@ -1,5 +1,5 @@
-zero\.controllers package
-=========================
+zero.controllers package
+========================
 
 .. automodule:: zero.controllers
     :members:
@@ -9,20 +9,9 @@ zero\.controllers package
 Submodules
 ----------
 
-zero\.controllers\.baz module
------------------------------
+.. toctree::
 
-.. automodule:: zero.controllers.baz
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-zero\.controllers\.things module
---------------------------------
-
-.. automodule:: zero.controllers.things
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   zero.controllers.baz
+   zero.controllers.tests
+   zero.controllers.things
 

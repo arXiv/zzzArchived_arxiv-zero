@@ -10,9 +10,9 @@ python:
 script:
   - pip install pipenv
   - pipenv install --dev
-  - # ./lintstats.sh
-  - # ./tests/docker_tests.sh
-  - # pipenv run nose2
+  - ./lintstats.sh
+  - ./tests/docker_tests.sh
+  - pipenv run nose2
 after_success:
-  - # coveralls
+  - coveralls
   - if [[ $TRAVIS_BRANCH == $DOCUMENTATION_BRANCH ]]; then ./update-docs.sh; fi

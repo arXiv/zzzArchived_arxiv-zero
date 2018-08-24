@@ -15,3 +15,4 @@ script:
   - pipenv run nose2
 after_success:
   - coveralls
+  - if [[ $TRAVIS_BRANCH == $DOCUMENTATION_BRANCH ]]; then ./update-docs.sh; fi

@@ -1,10 +1,16 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
+
+arxiv-base = "*"
 celery = "*"
+dataclasses = "*"
+flask = "*"
 flask-sqlalchemy = "*"
 jsonschema = "*"
 pyjwt = "*"
@@ -12,20 +18,19 @@ redis = "*"
 requests = "*"
 sqlalchemy = "*"
 uwsgi = "*"
-"nose2" = "*"
-dataclasses = "*"
-mypy = "*"
-flask = "*"
-arxiv-base = "*"
+
 
 [dev-packages]
+
 coverage = "*"
 mypy = "*"
 "nose2" = "*"
 pydocstyle = "*"
 pylint = "*"
-sphinx-autodoc-typehints = "*"
 sphinx = "*"
+sphinx-autodoc-typehints = "*"
+
 
 [requires]
+
 python_version = "3.6"

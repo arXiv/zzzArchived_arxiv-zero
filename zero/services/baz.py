@@ -78,7 +78,7 @@ class BazService(service.HTTPIntegration):
         if not response.ok:
             logger.debug('Baz responded with status %i', response.status_code)
             if response.status_code == requests.codes['-o-']:
-                return None
+                raise NoBaz('There is no baz')
             raise IOError('Could not get baz: %i' % response.status_code)
         try:
             data: Dict[str, Any] = response.json()

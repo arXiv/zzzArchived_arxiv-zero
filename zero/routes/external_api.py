@@ -20,7 +20,7 @@ from arxiv.users.auth.decorators import scoped
 from .. import controllers
 
 # Normally these would be defined in the ``arxiv.users`` package, so that we
-# can explicitly grant them when an authenticated session is created. These 
+# can explicitly grant them when an authenticated session is created. These
 # are defined here for demonstration purposes only.
 READ_THING = Scope('thing', Scope.actions.READ)
 WRITE_THING = Scope('thing', Scope.actions.UPDATE)
@@ -114,5 +114,5 @@ def handle_exception(error: HTTPException) -> Response:
 
     # Each Werkzeug HTTP exception has a class attribute called ``code``; we
     # can use that to set the status code on the response.
-    response = make_response(content, error.code)
+    response: Response = make_response(content, error.code)
     return response

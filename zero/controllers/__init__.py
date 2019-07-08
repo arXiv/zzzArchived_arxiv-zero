@@ -9,4 +9,4 @@ as part of the controller's signature.
 
 from .baz import get_baz
 from .things import get_thing, create_a_thing, start_mutating_a_thing, \
-    mutation_status
+    mutation_status, get_thing_description

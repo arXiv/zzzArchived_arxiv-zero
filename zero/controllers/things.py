@@ -63,6 +63,44 @@ def get_thing(thing_id: int) -> ResponseData:
     return io.BytesIO(thing.name.encode('utf-8')), HTTPStatus.OK, {}
 
 
+def get_thing_description(thing_id: int) -> ResponseData:
+    """
+    Retrieve description of a thing.
+
+    Parameters
+    ----------
+    thing_id : int
+        The unique identifier for the thing in question.
+    Returns
+    -------
+    dict
+        Summary information about the thing.
+    int
+        An HTTP status code.
+    dict
+        Some extra headers to add to the response.
+
+    """
+    logger.debug('Request to get a thing: %s', thing_id)
+    try:
+        thing = things.get_a_thing(thing_id)
+    except things.NoSuchThing as e:
+        logger.debug('No such thing: %s', e)
+        raise NotFound(NO_SUCH_THING) from e
+    except IOError as e:
+        logger.debug('Encountered IOError: %s', e)
+        raise InternalServerError(THING_WONT_COME) from e
+    logger.debug('Got the thing: %s', thing)
+    thing_url = url_for('external_api.read_thing', thing_id=thing.id)
+    response_data = {
+        'id': thing.id,
+        'name': thing.name,
+        'created': thing.created,
+        'url': thing_url
+    }
+    return response_data, HTTPStatus.OK, {}
+
+
 def create_a_thing(thing_data: dict) -> ResponseData:
     """
     Create a new :class:`.Thing`.
@@ -167,8 +205,10 @@ def mutation_status(task_id: str) -> ResponseData:
         reason.update({'reason': str(task.result)})
     elif task.is_complete:
         logger.debug('task is complete')
+        if task.result is None:
+            raise InternalServerError('Task is complete but result is None')
         reason = TASK_COMPLETE
-        reason.update({'result': task.result})
+        reason.update({'result': str(task.result)})
         thing_url = url_for('external_api.read_thing',
                             thing_id=task.result['thing_id'])
         headers.update({'Location': thing_url})

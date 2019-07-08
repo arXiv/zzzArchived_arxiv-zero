@@ -3,7 +3,6 @@
 import time
 from typing import Optional, Dict, Any, Tuple, Callable
 
-from flask import current_app
 from celery import shared_task
 from celery.result import AsyncResult
 from celery.signals import after_task_publish

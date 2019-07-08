@@ -1,7 +1,9 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
+
 
 [packages]
 celery = "==4.1.0"
@@ -21,14 +23,18 @@ typing-extensions = "*"
 arxiv-auth = "==0.3.4rc1"
 kombu = "==4.0.2"
 
+
 [dev-packages]
+
 coverage = "*"
 mypy = "*"
 "nose2" = "*"
 pydocstyle = "*"
 pylint = "*"
-sphinx-autodoc-typehints = "*"
 sphinx = "*"
+sphinx-autodoc-typehints = "*"
+
 
 [requires]
+
 python_version = "3.6"

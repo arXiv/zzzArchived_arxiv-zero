@@ -16,3 +16,4 @@ after_success:
   - "./tests/lint.sh funding"
   - "./tests/style.sh funding"
   - "./tests/type-check.sh funding"
+  - if [[ $TRAVIS_BRANCH == $DOCUMENTATION_BRANCH ]]; then ./update-docs.sh; fi

@@ -30,7 +30,7 @@ class TestCreateAndMutate(TestCase):
         # Initialize the web application with an on-disk test database.
         self.app = create_api_app()
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-        
+
         self.client = self.app.test_client()
 
         # Use the ``things`` service as a convenient hook into the DB.
@@ -67,7 +67,7 @@ class TestCreateAndMutate(TestCase):
 
     def test_create_a_thing_and_mutate_it(self) -> None:
         """Create and mutate a thing via the API."""
-        token = generate_token('1234', 'foo@user.com', 'foouser', 
+        token = generate_token('1234', 'foo@user.com', 'foouser',
                                scope=[READ_THING, WRITE_THING])
         thing_data = {'name': 'The Thing'}
 
@@ -86,7 +86,7 @@ class TestCreateAndMutate(TestCase):
                                     content_type='application/json')
 
         self.assertEqual(response.status_code, HTTPStatus.CREATED, "Created")
-        
+
         response_data = json.loads(response.data)
         self.assertEqual(response_data['name'], thing_data['name'])
         self.assertIn('created', response_data)
@@ -118,7 +118,7 @@ class TestCreateAndMutate(TestCase):
                                            data=json.dumps({}),
                                            headers={'Authorization': token},
                                            content_type='application/json')
-        self.assertEqual(mutate_response.status_code, HTTPStatus.ACCEPTED, 
+        self.assertEqual(mutate_response.status_code, HTTPStatus.ACCEPTED,
                          "Accepted")
 
         # Get mutation task status (not yet complete):
@@ -159,7 +159,7 @@ class TestCreateAndMutate(TestCase):
         #   Location: /thing/<id>
         status_response = self.client.get(status_path,
                                           headers={'Authorization': token})
-        self.assertEqual(status_response.status_code, HTTPStatus.SEE_OTHER, 
+        self.assertEqual(status_response.status_code, HTTPStatus.SEE_OTHER,
                          "See other")
         status_response_data = json.loads(status_response.data)
 

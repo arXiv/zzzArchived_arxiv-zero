@@ -33,7 +33,7 @@ class TestUIRoutes(TestCase):
         self.assertEqual(response.headers['Content-Type'],
                          'text/html; charset=utf-8')
 
-    @mock.patch(f'{ui.__name__}.controllers.get_thing')
+    @mock.patch(f'{ui.__name__}.controllers.get_thing_description')
     def test_get_thing(self, mock_get_thing: Any) -> None:
         """Endpoint /zero/ui/thing/<int> returns HTML page about a Thing."""
         foo_data = {'id': 4, 'name': 'First thing', 'created': datetime.now()}

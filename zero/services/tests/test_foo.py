@@ -53,8 +53,8 @@ class TestBazServiceRetrieve(TestCase):
     """The method :meth:`.retrieve_baz` is for getting baz."""
 
     @mock.patch('zero.services.baz.requests.Session')
-    def test_returns_none_when_not_found(self, mock_session: Any) -> None:
-        """If there is no such baz, returns None."""
+    def test_raises_nobaz_when_not_found(self, mock_session: Any) -> None:
+        """If there is no such baz, raises NoBaz."""
         mock_get_response = mock.MagicMock(status_code=404, ok=False)
         mock_get = mock.MagicMock(return_value=mock_get_response)
         mock_session_instance = mock.MagicMock()
@@ -62,7 +62,8 @@ class TestBazServiceRetrieve(TestCase):
         mock_session.return_value = mock_session_instance
 
         bazSession = baz.BazService('foo')
-        self.assertIsNone(bazSession.retrieve_baz(4))
+        with self.assertRaises(baz.NoBaz):
+            bazSession.retrieve_baz(4)
 
     @mock.patch('zero.services.baz.requests.Session')
     def test_returns_baz_when_valid_json(self, mock_session: Any) -> None:

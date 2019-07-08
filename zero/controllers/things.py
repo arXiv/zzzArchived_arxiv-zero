@@ -193,24 +193,25 @@ def mutation_status(task_id: str) -> ResponseData:
         raise NotFound(TASK_DOES_NOT_EXIST) from e
 
     status_code = HTTPStatus.OK
-
+    response_data: Dict[str, Any] = {}
     headers: Dict[str, Any] = {}
+
     logger.debug('task status is %s', task.status)
     if task.is_in_progress:
         logger.debug('task is in progress')
-        reason = TASK_IN_PROGRESS
+        response_data.update(TASK_IN_PROGRESS)
     elif task.is_failed:
         logger.debug('task has failed')
-        reason = TASK_FAILED
-        reason.update({'reason': str(task.result)})
+        response_data.update(TASK_FAILED)
+        response_data.update({'reason': str(task.result)})
     elif task.is_complete:
         logger.debug('task is complete')
         if task.result is None:
             raise InternalServerError('Task is complete but result is None')
-        reason = TASK_COMPLETE
-        reason.update({'result': str(task.result)})
+        response_data.update(TASK_COMPLETE)
+        response_data.update({'result': task.result})
         thing_url = url_for('external_api.read_thing',
                             thing_id=task.result['thing_id'])
         headers.update({'Location': thing_url})
         status_code = HTTPStatus.SEE_OTHER
-    return reason, status_code, headers
+    return response_data, status_code, headers

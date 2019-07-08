@@ -80,6 +80,7 @@ def get_a_thing(thing_id: int) -> Thing:
         When there is no such thing.
 
     """
+    logger.debug('Get a thing: %s', thing_id)
     try:
         thing_data = db.session.query(DBThing).get(thing_id)
     except OperationalError as e:

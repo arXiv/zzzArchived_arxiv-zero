@@ -49,10 +49,10 @@ def read_baz(baz_id: int) -> Response:
     data, status_code, headers = controllers.get_baz(baz_id)
     if not isinstance(data, dict):
         raise InternalServerError('Unexpected data')
-    response: Response = render_template("zero/baz.html", **data)
-    response.headers.extend(headers)
-    response.status_code = status_code
-    return response
+    resp: Response = make_response(render_template("zero/baz.html", **data))
+    resp.headers.extend(headers)
+    resp.status_code = status_code
+    return resp
 
 
 @blueprint.route('/thing/<int:thing_id>', methods=['GET'])
@@ -62,10 +62,10 @@ def read_thing(thing_id: int) -> Response:
     data, status_code, headers = controllers.get_thing_description(thing_id)
     if not isinstance(data, dict):
         raise InternalServerError('Unexpected data')
-    response: Response = render_template("zero/thing.html", **data)
-    response.headers.extend(headers)
-    response.status_code = status_code
-    return response
+    resp: Response = make_response(render_template("zero/thing.html", **data))
+    resp.headers.extend(headers)
+    resp.status_code = status_code
+    return resp
 
 
 # Here's where we register custom error handlers for this blueprint. These will

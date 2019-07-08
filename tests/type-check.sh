@@ -12,6 +12,5 @@ if [ -z ${GITHUB_TOKEN} ]; then
 else
     curl -u $USERNAME:$GITHUB_TOKEN \
         -d '{"state": "'$MYPY_STATE'", "target_url": "https://travis-ci.org/'$TRAVIS_REPO_SLUG'/builds/'$TRAVIS_BUILD_ID'", "description": "", "context": "code-quality/mypy"}' \
-        -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA \
-        > /dev/null 2>&1;
+        -XPOST https://api.github.com/repos/$TRAVIS_REPO_SLUG/statuses/$SHA;
 fi

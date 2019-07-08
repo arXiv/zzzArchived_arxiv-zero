@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from flask import Flask
 from sqlalchemy.exc import OperationalError
 
-from arxiv.base import logging 
+from arxiv.base import logging
 from ...domain import Thing
 from .models import db, DBThing
 
@@ -21,7 +21,7 @@ class NoSuchThing(Exception):
 def transaction() -> Generator:
     """
     Provide a context for an atomic operation on the database.
-    
+
     To be used as a context manager. For example;
 
     .. code-block:: python
@@ -34,12 +34,12 @@ def transaction() -> Generator:
 
 
     In the example above, of ``do_something_risky()`` raises an exception, the
-    database transaction within which ``store_a_thing()`` is operating will be 
+    database transaction within which ``store_a_thing()`` is operating will be
     rolled back.
     """
     try:
         yield
-        # Only commit if there are un-flushed changes. The caller may have 
+        # Only commit if there are un-flushed changes. The caller may have
         # already committed explicitly, e.g. to do its own exception handling.
         if db.session.dirty or db.session.deleted or db.session.new:
             db.session.commit()
@@ -87,7 +87,7 @@ def get_a_thing(thing_id: int) -> Thing:
         raise IOError('Could not query database: %s' % e.detail) from e
     if thing_data is None:
         raise NoSuchThing(f'There is no {thing_id}')
-    return Thing(id=thing_data.id, 
+    return Thing(id=thing_data.id,
                  name=thing_data.name,
                  created=thing_data.created)
 

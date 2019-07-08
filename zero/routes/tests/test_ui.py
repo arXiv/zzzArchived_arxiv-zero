@@ -39,7 +39,7 @@ class TestUIRoutes(TestCase):
         foo_data = {'id': 4, 'name': 'First thing', 'created': datetime.now()}
         mock_get_thing.return_value = foo_data, 200, {}
 
-        token = generate_token('1234', 'foo@user.com', 'foouser', 
+        token = generate_token('1234', 'foo@user.com', 'foouser',
                                scope=[READ_THING])
 
         response = self.client.get('/zero/ui/thing/4',

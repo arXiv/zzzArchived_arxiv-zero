@@ -3,13 +3,13 @@
 from typing import Optional, Dict, Any
 from enum import Enum
 from dataclasses import dataclass, field
-    
+
 
 @dataclass
 class Task:
 
     class Status(Enum):
-        IN_PROGRESS = 'IN_PROGRESS'    
+        IN_PROGRESS = 'IN_PROGRESS'
         FAILURE = 'FAILURE'
         SUCCESS = 'SUCCESS'
 
@@ -25,7 +25,7 @@ class Task:
     @property
     def is_in_progress(self) -> bool:
         return bool(self.status is Task.Status.IN_PROGRESS)
-    
+
     @property
     def is_failed(self) -> bool:
         return bool(self.status is Task.Status.FAILURE)
@@ -33,4 +33,3 @@ class Task:
     @property
     def is_complete(self) -> bool:
         return bool(self.status in (Task.Status.SUCCESS, Task.Status.FAILURE))
-    

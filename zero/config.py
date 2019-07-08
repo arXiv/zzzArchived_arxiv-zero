@@ -59,7 +59,7 @@ DEBUG = bool(int(environ.get('DEBUG', '0')))
 TESTING = bool(int(environ.get('TESTING', '0')))
 """enable/disable testing mode"""
 
-SECRET_KEY = environ.get('FLASK_SECRET', 'fooflasksecret')
+SECRET_KEY = environ.get('FLASK_SECRET', 'bazflasksecret')
 """Flask secret key."""
 
 PROPAGATE_EXCEPTIONS = \
@@ -96,7 +96,7 @@ logging in debug mode, 'production' will only log in production and 'never'
 disables it entirely.
 """
 
-SERVER_NAME = None  # "foohost:8000"   #environ.get('SERVER_NAME', None)
+SERVER_NAME = None  # "bazhost:8000"   #environ.get('SERVER_NAME', None)
 """
 the name and port number of the server. Required for subdomain support
 (e.g.: 'myapp.dev:5000') Note that localhost does not support subdomains so
@@ -115,43 +115,43 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 """Track modifications feature should always be disabled."""
 
 
-# Integration with the foo service.
-FOO_HOST = environ.get('FOO_SERVICE_HOST', 'arxiv.org')
-"""Hostname or addreess of the foo service."""
+# Integration with the baz service.
+BAZ_HOST = environ.get('BAZ_SERVICE_HOST', 'arxiv.org')
+"""Hostname or addreess of the baz service."""
 
-FOO_PORT = environ.get('FOO_SERVICE_PORT', '443')
-"""Port for the foo service."""
+BAZ_PORT = environ.get('BAZ_SERVICE_PORT', '443')
+"""Port for the baz service."""
 
-FOO_PROTO = environ.get(f'FOO_PORT_{FOO_PORT}_PROTO',
-                             environ.get('FOO_PROTO', 'https'))
-"""Protocol for the foo service."""
+BAZ_PROTO = environ.get(f'BAZ_PORT_{BAZ_PORT}_PROTO',
+                        environ.get('BAZ_PROTO', 'https'))
+"""Protocol for the baz service."""
 
-FOO_PATH = environ.get('FOO_PATH', '')
-"""Path at which the foo service is deployed."""
+BAZ_PATH = environ.get('BAZ_PATH', '')
+"""Path at which the baz service is deployed."""
 
-FOO_ENDPOINT = environ.get(
-    'FOO_ENDPOINT',
-    '%s://%s:%s/%s' % (FOO_PROTO, FOO_HOST, FOO_PORT,
-                       FOO_PATH)
+BAZ_ENDPOINT = environ.get(
+    'BAZ_ENDPOINT',
+    '%s://%s:%s/%s' % (BAZ_PROTO, BAZ_HOST, BAZ_PORT,
+                       BAZ_PATH)
 )
 """
-Full URL to the root foo service API endpoint.
+Full URL to the root baz service API endpoint.
 
-If not explicitly provided, this is composed from :const:`FOO_HOST`,
-:const:`FOO_PORT`, :const:`FOO_PROTO`, and :const:`FOO_PATH`.
+If not explicitly provided, this is composed from :const:`BAZ_HOST`,
+:const:`BAZ_PORT`, :const:`BAZ_PROTO`, and :const:`BAZ_PATH`.
 """
 
-FOO_STATUS_TIMEOUT = float(environ.get('FOO_STATUS_TIMEOUT', 1.0))
+BAZ_STATUS_TIMEOUT = float(environ.get('BAZ_STATUS_TIMEOUT', 1.0))
 
-FOO_VERIFY = bool(int(environ.get('FOO_VERIFY', '1')))
-"""Enable/disable SSL certificate verification for foo service."""
+BAZ_VERIFY = bool(int(environ.get('BAZ_VERIFY', '1')))
+"""Enable/disable SSL certificate verification for baz service."""
 
-if FOO_PROTO == 'https' and not FOO_VERIFY:
-    warnings.warn('Certificate verification for foo is disabled; this'
+if BAZ_PROTO == 'https' and not BAZ_VERIFY:
+    warnings.warn('Certificate verification for baz is disabled; this'
                   ' should not be disabled in production.')
 
 
-# --- EXTERNAL URL CONFIG --- 
+# --- EXTERNAL URL CONFIG ---
 
 EXTERNAL_URL_SCHEME = environ.get('EXTERNAL_URL_SCHEME', 'https')
 BASE_SERVER = environ.get('BASE_SERVER', 'arxiv.org')
@@ -261,10 +261,10 @@ if not KINESIS_VERIFY:
 VAULT_ENABLED = bool(int(environ.get('VAULT_ENABLED', '0')))
 """Enable/disable secret retrieval from Vault."""
 
-KUBE_TOKEN = environ.get('KUBE_TOKEN', 'fookubetoken')
+KUBE_TOKEN = environ.get('KUBE_TOKEN', 'bazkubetoken')
 """Service account token for authenticating with Vault. May be a file path."""
 
-VAULT_HOST = environ.get('VAULT_HOST', 'foovaulthost')
+VAULT_HOST = environ.get('VAULT_HOST', 'bazvaulthost')
 """Vault hostname/address."""
 
 VAULT_PORT = environ.get('VAULT_PORT', '1234')

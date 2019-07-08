@@ -16,6 +16,6 @@ class DBThing(db.Model):
 
     name = Column(String(255))
     """The name of the thing."""
-    
+
     created = Column(DateTime)
     """The datetime when the thing was created."""

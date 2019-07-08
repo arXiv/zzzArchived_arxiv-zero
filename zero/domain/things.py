@@ -22,7 +22,7 @@ class Thing:
     id: Optional[int] = field(default=None)
     """
     The unique identifier for a thing.
-    
+
     If ``id`` is ``None``, the thing has not been persisted.
     """
 

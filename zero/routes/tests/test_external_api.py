@@ -58,7 +58,7 @@ class TestExternalAPIRoutes(TestCase):
         foo_data = {'id': 4, 'name': 'First thing', 'created': datetime.now()}
         mock_get_thing.return_value = foo_data, HTTPStatus.OK, {}
 
-        token = generate_token('1234', 'foo@user.com', 'foouser', 
+        token = generate_token('1234', 'foo@user.com', 'foouser',
                                scope=[READ_THING])
 
         response = self.client.get('/zero/api/thing/4',
@@ -81,15 +81,15 @@ class TestExternalAPIRoutes(TestCase):
     def test_create_thing(self, mock_create_a_thing: Any) -> None:
         """POST to endpoint /zero/api/thing creates and stores a Thing."""
         foo_data = {'name': 'A New Thing'}
-        return_data = {'name': 'A New Thing', 
+        return_data = {'name': 'A New Thing',
                        'id': 25,
-                       'created': datetime.now(), 
+                       'created': datetime.now(),
                        'url': '/zero/api/thing/25'}
         headers = {'Location': '/zero/api/thing/25'}
         mock_create_a_thing.return_value = \
             return_data, HTTPStatus.CREATED, headers
 
-        token = generate_token('1234', 'foo@user.com', 'foouser', 
+        token = generate_token('1234', 'foo@user.com', 'foouser',
                                scope=[READ_THING, WRITE_THING])
 
         response = self.client.post('/zero/api/thing',

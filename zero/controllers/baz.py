@@ -33,7 +33,7 @@ def get_baz(baz_id: int) -> ResponseData:
         An HTTP status code.
     dict
         Some extra headers to add to the response.
-        
+
     """
     baz_data: Dict[str, Any]
     baz_service = baz.BazService.current_session()
@@ -43,6 +43,6 @@ def get_baz(baz_id: int) -> ResponseData:
         raise NotFound('No such baz') from e
     except IOError:
         raise InternalServerError(BAZ_WONT_GO) from e
-    
+
     baz_data = {'foo': the_baz.foo, 'mukluk': the_baz.mukluk}
     return baz_data, HTTPStatus.OK, {}

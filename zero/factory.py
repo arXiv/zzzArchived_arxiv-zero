@@ -13,7 +13,7 @@ from .services import baz, things
 from .celery import celery_app
 
 
-# We defer configuration to app creation time, so that we have an opportunity 
+# We defer configuration to app creation time, so that we have an opportunity
 # to use env-defined values.
 def _configure_celery_app() -> None:
     from . import celeryconfig

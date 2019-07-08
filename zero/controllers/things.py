@@ -91,7 +91,7 @@ def create_a_thing(thing_data: dict) -> ResponseData:
         things.store_a_thing(thing)
     except RuntimeError as e:
         raise InternalServerError(CANT_CREATE_THING) from e
-    
+
     if not thing.is_persisted:
         raise InternalServerError('Thing not persisted')
 
@@ -153,7 +153,7 @@ def mutation_status(task_id: str) -> ResponseData:
         raise BadRequest(INVALID_TASK_ID) from e
     except NoSuchTask as e:
         raise NotFound(TASK_DOES_NOT_EXIST) from e
-    
+
     status_code = HTTPStatus.OK
 
     headers: Dict[str, Any] = {}
@@ -164,12 +164,12 @@ def mutation_status(task_id: str) -> ResponseData:
     elif task.is_failed:
         logger.debug('task has failed')
         reason = TASK_FAILED
-        reason.update({'reason': str(task.result)})    
+        reason.update({'reason': str(task.result)})
     elif task.is_complete:
         logger.debug('task is complete')
         reason = TASK_COMPLETE
         reason.update({'result': task.result})
-        thing_url = url_for('external_api.read_thing', 
+        thing_url = url_for('external_api.read_thing',
                             thing_id=task.result['thing_id'])
         headers.update({'Location': thing_url})
         status_code = HTTPStatus.SEE_OTHER

@@ -173,7 +173,7 @@ class TestThingUpdater(TestCase):
         the_thing = Thing(
             id=555,
             name='Whoops'
-        ) 
+        )
         mock_query.return_value = mock.MagicMock(
             get=mock.MagicMock(return_value=None)
         )

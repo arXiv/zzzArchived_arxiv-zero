@@ -47,7 +47,8 @@ class TestThingGetter(TestCase):
 
     def test_get_a_thing_that_doesnt_exist(self) -> None:
         """When the thing doesn't exist, returns None."""
-        self.assertIsNone(things.get_a_thing(2))
+        with self.assertRaises(things.NoSuchThing):
+            things.get_a_thing(2)
 
     @mock.patch('zero.services.things.db.session.query')
     def test_get_thing_when_db_is_unavailable(self, mock_query: Any) -> None:
@@ -172,7 +173,7 @@ class TestThingUpdater(TestCase):
         the_thing = Thing(
             id=555,
             name='Whoops'
-        ) 
+        )
         mock_query.return_value = mock.MagicMock(
             get=mock.MagicMock(return_value=None)
         )

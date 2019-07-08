@@ -1,7 +1,7 @@
-zero.encode module
+zero.celery module
 ==================
 
-.. automodule:: zero.encode
+.. automodule:: zero.celery
     :members:
     :undoc-members:
     :show-inheritance:

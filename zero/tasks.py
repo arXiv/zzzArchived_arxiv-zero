@@ -2,13 +2,27 @@
 
 import time
 from typing import Optional, Dict, Any, Tuple, Callable
+
 from celery import shared_task
 from celery.result import AsyncResult
 from celery.signals import after_task_publish
 from celery import current_app
-from zero.services import things
-from zero.process import mutate
-from zero.domain import Thing
+
+from .services import things
+from .domain import Thing, Task
+from .process import mutate
+
+
+STATE_MAP = {'SENT': Task.Status.IN_PROGRESS,
+             'STARTED': Task.Status.IN_PROGRESS,
+             'RETRY': Task.Status.IN_PROGRESS,
+             'FAILURE': Task.Status.FAILURE,
+             'SUCCESS': Task.Status.SUCCESS}
+"""Maps Celery task states to :class:`.Task.Status`."""
+
+
+class NoSuchTask(Exception):
+    """An operation on a non-existant task was attempted."""
 
 
 @shared_task
@@ -34,7 +48,7 @@ def mutate_a_thing(thing_id: int, with_sleep: int = 5) -> Dict[str, Any]:
     return {'thing_id': thing_id, 'result': len(a_thing.name)}
 
 
-def check_mutation_status(task_id: str) -> Tuple[str, Any]:
+def check_mutation_status(task_id: str) -> Task:
     """
     Check the status of a mutation task.
 
@@ -45,17 +59,24 @@ def check_mutation_status(task_id: str) -> Tuple[str, Any]:
 
     Returns
     -------
-    str
-        Status.
+    :class:`.Task`
+
     """
     if not isinstance(task_id, str):
         raise ValueError('task_id must be string, not %s' % type(task_id))
-    task = AsyncResult(task_id)
-    if task.status in ['SUCCESS', 'FAILED']:
-        result = task.result
-    else:
-        result = None
-    return task.status, result
+
+    celery_task = AsyncResult(task_id)
+
+    # Since we are explicitly setting the state to SENT upon publication of the
+    # task (see ``update_sent_state()``), any AsyncResult in ``PENDING`` refers
+    # to a non-existant task.
+    if celery_task.status == 'PENDING':
+        raise NoSuchTask(f'No such task: {task_id}')
+
+    task = Task(task_id=task_id, status=STATE_MAP[celery_task.status])
+    if task.is_complete:
+        task.result = celery_task.result
+    return task
 
 
 @after_task_publish.connect

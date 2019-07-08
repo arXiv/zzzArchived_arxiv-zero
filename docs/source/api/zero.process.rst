@@ -6,11 +6,17 @@ zero.process package
     :undoc-members:
     :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+    zero.process.tests
+
 Submodules
 ----------
 
 .. toctree::
 
    zero.process.mutate
-   zero.process.tests
 

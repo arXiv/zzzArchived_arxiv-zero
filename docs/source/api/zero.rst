@@ -12,7 +12,7 @@ Subpackages
 .. toctree::
 
     zero.controllers
-    zero.middleware
+    zero.domain
     zero.process
     zero.routes
     zero.services
@@ -23,13 +23,10 @@ Submodules
 
 .. toctree::
 
-   zero.authorization
+   zero.celery
    zero.celeryconfig
    zero.config
-   zero.domain
-   zero.encode
    zero.factory
-   zero.shared
    zero.tasks
    zero.worker
 

@@ -12,6 +12,5 @@ Submodules
 .. toctree::
 
    zero.controllers.baz
-   zero.controllers.tests
    zero.controllers.things
 

@@ -8,11 +8,13 @@ os:
 python:
   - "3.6"
 script:
-  - pip install pipenv
+  - pip install -U pip pipenv
   - pipenv install --dev
-  - ./lintstats.sh
-  - ./tests/docker_tests.sh
-  - pipenv run nose2
+  - pipenv run python -m tests.run_app_tests
+  - pipenv run nose2 --with-coverage --coverage-report=term-missing
 after_success:
   - coveralls
+  - "./tests/lint.sh zero"
+  - "./tests/style.sh zero"
+  - "./tests/type-check.sh zero"
   - if [[ $TRAVIS_BRANCH == $DOCUMENTATION_BRANCH ]]; then ./update-docs.sh; fi

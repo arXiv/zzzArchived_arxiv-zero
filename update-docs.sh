@@ -2,7 +2,7 @@
 set -e # exit on error
 set -x # show each command
 
-REPO=cul-it/arxiv-zero
+REPO=arxiv/arxiv-zero
 SRCDOCS=`pwd`/docs/build/html
 echo $SRCDOCS
 

@@ -18,4 +18,5 @@ ADD zero/ /opt/arxiv/zero/
 
 EXPOSE 8000
 
-CMD pipenv run uwsgi --ini uwsgi.ini
+ENTRYPOINT ["pipenv", "run"]
+CMD ["uwsgi", "--ini", "uwsgi.ini"]

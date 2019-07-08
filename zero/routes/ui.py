@@ -18,36 +18,54 @@ Note that each handler renders a custom template (in
 zero/templates/zero/). Each of those templates extends a template in
 arxiv.base that provides the general layout and the funky
 skull-and-crossbones image. See
-http://github.com/cul-it/arxiv-base/tree/master/arxiv/base/templates/base
+http://github.com/arxiv/arxiv-base/tree/master/arxiv/base/templates/base
 
 See :func:`handle_bad_request`.
 
 """
 
 from flask import Blueprint, render_template, url_for, Response, make_response
-from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, Forbidden
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, \
+    Forbidden, InternalServerError
 from arxiv import status
-from zero import authorization
-from zero.controllers import baz, things
+
+from arxiv.users.domain import Scope
+from arxiv.users.auth.decorators import scoped
+
+from .. import controllers
+
+# Normally these would be defined in the ``arxiv.users`` package, so that we
+# can explicitly grant them when an authenticated session is created. These
+# are defined here for demonstration purposes only.
+READ_THING = Scope('thing', Scope.actions.READ)
+WRITE_THING = Scope('thing', Scope.actions.UPDATE)
 
 blueprint = Blueprint('ui', __name__, url_prefix='/zero/ui')
 
 
 @blueprint.route('/baz/<int:baz_id>', methods=['GET'])
-def read_baz(baz_id: int) -> tuple:
+def read_baz(baz_id: int) -> Response:
     """Provide some data about the baz."""
-    data, status_code, headers = baz.get_baz(baz_id)
-    response = render_template("zero/baz.html", **data)
-    return response, status_code, headers
+    data, status_code, headers = controllers.get_baz(baz_id)
+    if not isinstance(data, dict):
+        raise InternalServerError('Unexpected data')
+    resp: Response = make_response(render_template("zero/baz.html", **data))
+    resp.headers.extend(headers)
+    resp.status_code = status_code
+    return resp
 
 
 @blueprint.route('/thing/<int:thing_id>', methods=['GET'])
-@authorization.scoped('read:thing')
-def read_thing(thing_id: int) -> tuple:
+@scoped(READ_THING)
+def read_thing(thing_id: int) -> Response:
     """Provide some data about the thing."""
-    data, status_code, headers = things.get_thing(thing_id)
-    response = render_template("zero/thing.html", **data)
-    return response, status_code, headers
+    data, status_code, headers = controllers.get_thing_description(thing_id)
+    if not isinstance(data, dict):
+        raise InternalServerError('Unexpected data')
+    resp: Response = make_response(render_template("zero/thing.html", **data))
+    resp.headers.extend(headers)
+    resp.status_code = status_code
+    return resp
 
 
 # Here's where we register custom error handlers for this blueprint. These will
@@ -66,7 +84,7 @@ def handle_bad_request(error: BadRequest) -> Response:
     """
     rendered = render_template("zero/400_bad_request.html", error=error,
                                pagetitle="Nope! 400 Bad Request")
-    response = make_response(rendered)
+    response: Response = make_response(rendered)
     response.status_code = status.HTTP_400_BAD_REQUEST
     return response
 
@@ -76,6 +94,6 @@ def handle_unauthorized(error: Unauthorized) -> Response:
     """Render a custom error page for 401 Unauthorized responses."""
     rendered = render_template("zero/401_unauthorized.html", error=error,
                                pagetitle="Who are you?")
-    response = make_response(rendered)
+    response: Response = make_response(rendered)
     response.status_code = status.HTTP_401_UNAUTHORIZED
     return response

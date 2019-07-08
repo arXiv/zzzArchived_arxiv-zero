@@ -10,6 +10,7 @@ python:
 script:
   - pip install -U pip pipenv
   - pipenv install --dev
+  - pipenv run python -m tests.run_app_tests
   - pipenv run nose2 --with-coverage --coverage-report=term-missing
 after_success:
   - coveralls

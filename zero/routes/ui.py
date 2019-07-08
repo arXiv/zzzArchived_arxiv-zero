@@ -18,7 +18,7 @@ Note that each handler renders a custom template (in
 zero/templates/zero/). Each of those templates extends a template in
 arxiv.base that provides the general layout and the funky
 skull-and-crossbones image. See
-http://github.com/cul-it/arxiv-base/tree/master/arxiv/base/templates/base
+http://github.com/arxiv/arxiv-base/tree/master/arxiv/base/templates/base
 
 See :func:`handle_bad_request`.
 
@@ -34,7 +34,7 @@ from arxiv.users.auth.decorators import scoped
 from .. import controllers
 
 # Normally these would be defined in the ``arxiv.users`` package, so that we
-# can explicitly grant them when an authenticated session is created. These 
+# can explicitly grant them when an authenticated session is created. These
 # are defined here for demonstration purposes only.
 READ_THING = Scope('thing', Scope.actions.READ)
 WRITE_THING = Scope('thing', Scope.actions.UPDATE)

@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/cul-it/arxiv-zero/master.svg)](https://travis-ci.org/cul-it/arxiv-zero) [![Coverage Status](https://img.shields.io/coveralls/github/cul-it/arxiv-zero/master.svg)](https://coveralls.io/github/cul-it/arxiv-zero?branch=master)
+[![Build Status](https://img.shields.io/travis/arxiv/arxiv-zero/master.svg)](https://travis-ci.org/arxiv/arxiv-zero) [![Coverage Status](https://img.shields.io/coveralls/github/arxiv/arxiv-zero/master.svg)](https://coveralls.io/github/arxiv/arxiv-zero?branch=master)
 
 # arXiv Zero
 
@@ -18,12 +18,12 @@ There are multiple ways to run this server:
 ### Docker
 
 1.  Setup [Docker CE using the instructions for your OS](https://docs.docker.com/engine/installation/)
-2.  Build [arxiv-base](https://github.com/cul-it/arxiv-base)
+2.  Build [arxiv-base](https://github.com/arxiv/arxiv-base)
 (clone repo, then `docker build -t arxiv-base:latest .`) if not using a registry.
     Also note, if not using a registry, you may need to create the tag manually in some docker
     installations or versions: `docker tag built_image_id arxiv-base:latest` (seems to be a docker bug).
 3.  Build the Docker image, which will execute all the commands in the
-    [`Dockerfile`](https://github.com/cul-it/arxiv-zero/blob/master/Dockerfile):
+    [`Dockerfile`](https://github.com/arxiv/arxiv-zero/blob/master/Dockerfile):
     `docker build -t arxiv-zero .`
 4.  `docker run -p 8000:8000 --name container_name arxiv-zero` (add a `-d` flag
     to run in daemon mode)

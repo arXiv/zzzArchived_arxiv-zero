@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/arxiv/arxiv-zero/master.svg)](https://travis-ci.org/arxiv/arxiv-zero) [![Coverage Status](https://img.shields.io/coveralls/github/arXiv/arxiv-zero/master.svg)](https://coveralls.io/github/arxiv/arxiv-zero?branch=master)
+[![Build Status](https://img.shields.io/travis/arxiv/arxiv-zero/master.svg)](https://travis-ci.org/arxiv/arxiv-zero) [![Coverage Status](https://img.shields.io/coveralls/github/arXiv/arxiv-zero/master.svg)](https://coveralls.io/github/arXiv/arxiv-zero?branch=master)
 
 # arXiv Zero
 

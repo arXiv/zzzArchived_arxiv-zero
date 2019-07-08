@@ -40,7 +40,7 @@ from .. import controllers
 READ_THING = Scope('thing', Scope.actions.READ)
 WRITE_THING = Scope('thing', Scope.actions.UPDATE)
 
-blueprint = Blueprint('ui', __name__, url_prefix='/zero/ui')
+blueprint = Blueprint('ui', __name__, url_prefix='')
 
 
 @blueprint.route('/baz/<int:baz_id>', methods=['GET'])

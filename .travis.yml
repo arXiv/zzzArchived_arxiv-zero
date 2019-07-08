@@ -14,7 +14,7 @@ script:
   - pipenv run nose2 --with-coverage --coverage-report=term-missing
 after_success:
   - coveralls
-  - "./tests/lint.sh funding"
-  - "./tests/style.sh funding"
-  - "./tests/type-check.sh funding"
+  - "./tests/lint.sh zero"
+  - "./tests/style.sh zero"
+  - "./tests/type-check.sh zero"
   - if [[ $TRAVIS_BRANCH == $DOCUMENTATION_BRANCH ]]; then ./update-docs.sh; fi

@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/arxiv/arxiv-zero/master.svg)](https://travis-ci.org/arxiv/arxiv-zero) [![Coverage Status](https://img.shields.io/coveralls/github/arxiv/arxiv-zero/master.svg)](https://coveralls.io/github/arxiv/arxiv-zero?branch=master)
+[![Build Status](https://img.shields.io/travis/arxiv/arxiv-zero/master.svg)](https://travis-ci.org/arxiv/arxiv-zero) [![Coverage Status](https://img.shields.io/coveralls/github/arXiv/arxiv-zero/master.svg)](https://coveralls.io/github/arxiv/arxiv-zero?branch=master)
 
 # arXiv Zero
 
@@ -87,12 +87,6 @@ $ FLASK_APP=app.py python populate_test_database.py
 ```
 
 ## Testing
-
-Some example unit tests are provided in [``tests/``](tests/). They are written
-using the built-in [unit-test](https://docs.python.org/3/library/unittest.html)
-framework. **Be sure to change** [``tests/test_mypy.py``](tests/test_mypy.py) to reference
-your python package by change the line `self.pkgname: str = "zero"` to have
-your package name rather than "zero".
 
 We use the [nose2](http://nose2.readthedocs.io/en/latest/) test runner, with
 coverage. For example:

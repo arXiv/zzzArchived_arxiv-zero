@@ -1,56 +1,52 @@
 """Application factory for zero app."""
 
-
 from flask import Flask
-from celery import Celery
 
 from arxiv.base import logging
-
-from zero import celeryconfig
-from zero.routes import external_api, ui
-from zero.services import baz, things
-from zero.encode import ISO8601JSONEncoder
-from zero.middleware import auth
+from arxiv.util.serialize import ISO8601JSONEncoder
+from arxiv.users import auth
 from arxiv.base.middleware import wrap
 from arxiv.base import Base
 
+from .routes import external_api, ui
+from .services import baz, things
+from .celery import celery_app
 
-celery_app = Celery(__name__, results=celeryconfig.result_backend,
-                    broker=celeryconfig.broker_url)
+
+# We defer configuration to app creation time, so that we have an opportunity 
+# to use env-defined values.
+def _configure_celery_app() -> None:
+    from . import celeryconfig
+    celery_app.config_from_object(celeryconfig)
 
 
-def create_web_app() -> Flask:
-    """Initialize and configure the zero application."""
+def _create_base_app() -> Flask:
     app = Flask('zero')
     app.config.from_pyfile('config.py')
     app.json_encoder = ISO8601JSONEncoder
 
-    baz.init_app(app)
+    baz.BazService.init_app(app)
     things.init_app(app)
 
     Base(app)    # Gives us access to the base UI templates and resources.
-    app.register_blueprint(external_api.blueprint)
+    auth.Auth(app)    # Sets up authn/z machinery.
+    wrap(app, [auth.middleware.AuthMiddleware])
+    return app
+
+
+def create_web_app() -> Flask:
+    """Initialize and configure the zero application."""
+    app = _create_base_app()
     app.register_blueprint(ui.blueprint)
-
-    celery_app.config_from_object(celeryconfig)
-    celery_app.autodiscover_tasks(['zero'], related_name='tasks', force=True)
-    celery_app.conf.task_default_queue = 'zero-worker'
-
-    wrap(app, [auth.ExampleAuthMiddleware])
-
     return app
 
 
-def create_worker_app() -> Celery:
-    """Initialize and configure the zero worker application."""
-    app = Flask('zero')
-    app.config.from_pyfile('config.py')
-
-    baz.init_app(app)
-    things.init_app(app)
-
-    celery_app.config_from_object(celeryconfig)
-    celery_app.autodiscover_tasks(['zero'], related_name='tasks', force=True)
-    celery_app.conf.task_default_queue = 'zero-worker'
-
+def create_api_app() -> Flask:
+    app = _create_base_app()
+    app.register_blueprint(external_api.blueprint)
     return app
+
+
+def create_worker_app() -> Flask:
+    """Initialize the zero worker application."""
+    return _create_base_app()

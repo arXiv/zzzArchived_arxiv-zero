@@ -22,7 +22,7 @@ class TestBazServiceStatus(TestCase):
         type(mock_session_instance).get = mock_get
         mock_session.return_value = mock_session_instance
 
-        bazSession = baz.BazServiceSession('foo')
+        bazSession = baz.BazService('foo')
         self.assertTrue(bazSession.status())
 
     @mock.patch('zero.services.baz.requests.Session')
@@ -34,7 +34,7 @@ class TestBazServiceStatus(TestCase):
         type(mock_session_instance).head = mock_head
         mock_session.return_value = mock_session_instance
 
-        bazSession = baz.BazServiceSession('foo')
+        bazSession = baz.BazService('foo')
         self.assertFalse(bazSession.status())
 
     @mock.patch('zero.services.baz.requests.Session')
@@ -45,7 +45,7 @@ class TestBazServiceStatus(TestCase):
         type(mock_session_instance).head = mock_head
         mock_session.return_value = mock_session_instance
 
-        bazSession = baz.BazServiceSession('foo')
+        bazSession = baz.BazService('foo')
         self.assertFalse(bazSession.status())
 
 
@@ -61,7 +61,7 @@ class TestBazServiceRetrieve(TestCase):
         type(mock_session_instance).get = mock_get
         mock_session.return_value = mock_session_instance
 
-        bazSession = baz.BazServiceSession('foo')
+        bazSession = baz.BazService('foo')
         self.assertIsNone(bazSession.retrieve_baz(4))
 
     @mock.patch('zero.services.baz.requests.Session')
@@ -78,7 +78,7 @@ class TestBazServiceRetrieve(TestCase):
         type(mock_session_instance).get = mock_get
         mock_session.return_value = mock_session_instance
 
-        bazSession = baz.BazServiceSession('foo')
+        bazSession = baz.BazService('foo')
         thebaz = bazSession.retrieve_baz(4)
         self.assertIsInstance(thebaz, Baz)
         if isinstance(thebaz, Baz):
@@ -94,7 +94,7 @@ class TestBazServiceRetrieve(TestCase):
         type(mock_session_instance).get = mock_get
         mock_session.return_value = mock_session_instance
 
-        bazSession = baz.BazServiceSession('foo')
+        bazSession = baz.BazService('foo')
         with self.assertRaises(IOError):
             bazSession.retrieve_baz(4)
 
@@ -112,6 +112,6 @@ class TestBazServiceRetrieve(TestCase):
         type(mock_session_instance).get = mock_get
         mock_session.return_value = mock_session_instance
 
-        bazSession = baz.BazServiceSession('foo')
+        bazSession = baz.BazService('foo')
         with self.assertRaises(IOError):
             bazSession.retrieve_baz(4)

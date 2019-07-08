@@ -3,8 +3,9 @@
 from unittest import TestCase, mock
 from datetime import datetime
 from typing import Any
-from zero.domain import Thing
-from zero import tasks
+
+from ..domain import Thing, Task
+from .. import tasks
 
 
 class TestMutateAThing(TestCase):
@@ -48,25 +49,25 @@ class TestCheckTaskStatus(TestCase):
         mock_result = mock.MagicMock(status='SUCCESS', result=expected_result)
         mock_AsyncResult.return_value = mock_result
 
-        status, result = tasks.check_mutation_status(task_id)
+        task = tasks.check_mutation_status(task_id)
 
-        self.assertEqual(result, expected_result)
+        self.assertEqual(task.result, expected_result)
         self.assertEqual(mock_AsyncResult.call_args[0][0], task_id)
-        self.assertEqual(status, 'SUCCESS')
+        self.assertEqual(task.status, Task.Status.SUCCESS)
 
     @mock.patch('zero.tasks.AsyncResult')
     def test_result_returned_on_fail(self, mock_AsyncResult: Any) -> None:
         """When task fails task result is returned."""
         task_id = 'a440s0x0kf0k04s'
         expected_result = 'The Result'
-        mock_result = mock.MagicMock(status='FAILED', result=expected_result)
+        mock_result = mock.MagicMock(status='FAILURE', result=expected_result)
         mock_AsyncResult.return_value = mock_result
 
-        status, result = tasks.check_mutation_status(task_id)
+        task = tasks.check_mutation_status(task_id)
 
-        self.assertEqual(result, expected_result)
+        self.assertEqual(task.result, expected_result)
         self.assertEqual(mock_AsyncResult.call_args[0][0], task_id)
-        self.assertEqual(status, 'FAILED')
+        self.assertEqual(task.status, Task.Status.FAILURE)
 
     @mock.patch('zero.tasks.AsyncResult')
     def test_result_none_when_pending(self, mock_AsyncResult: Any) -> None:
@@ -76,8 +77,5 @@ class TestCheckTaskStatus(TestCase):
         mock_result = mock.MagicMock(status='PENDING', result=eventual_result)
         mock_AsyncResult.return_value = mock_result
 
-        status, result = tasks.check_mutation_status(task_id)
-
-        self.assertEqual(result, None)
-        self.assertEqual(mock_AsyncResult.call_args[0][0], task_id)
-        self.assertEqual(status, 'PENDING')
+        with self.assertRaises(tasks.NoSuchTask):
+            tasks.check_mutation_status(task_id)

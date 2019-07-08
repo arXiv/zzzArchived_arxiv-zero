@@ -2,8 +2,8 @@
 
 from unittest import TestCase
 from datetime import datetime
-from zero.domain import Thing
-from zero.process.mutate import add_some_one_to_the_thing
+from ...domain import Thing
+from ..mutate import add_some_one_to_the_thing
 
 
 class TestMutateThing(TestCase):

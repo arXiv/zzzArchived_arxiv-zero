@@ -29,7 +29,6 @@ Submodules
    zero.domain
    zero.encode
    zero.factory
-   zero.shared
    zero.tasks
    zero.worker
 

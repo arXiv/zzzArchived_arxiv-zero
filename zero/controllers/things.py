@@ -1,15 +1,24 @@
 """Handles all thing-related requests."""
 
-from typing import Tuple, Optional, Any, Dict
+import io
+from typing import Tuple, Optional, Any, Dict, Union, IO
+from http import HTTPStatus
 from datetime import datetime
+
 from werkzeug.exceptions import NotFound, BadRequest, InternalServerError
 from arxiv import status
-from zero.services import things
-from zero.domain import Thing
-from zero.tasks import mutate_a_thing, check_mutation_status
+from arxiv.base import logging
+from ..services import things
+from ..domain import Thing
+from ..tasks import mutate_a_thing, check_mutation_status, NoSuchTask
 
-from zero.shared import url_for
+from flask import url_for
 
+Body = Union[Dict[str, Any], IO]
+Headers = Dict[str, str]
+ResponseData = Tuple[Body, HTTPStatus, Headers]
+
+logger = logging.getLogger(__name__)
 
 NO_SUCH_THING = 'there is no thing'
 THING_WONT_COME = 'could not get the thing'
@@ -23,46 +32,38 @@ TASK_FAILED = {'status': 'failed'}
 TASK_COMPLETE = {'status': 'complete'}
 
 
-Response = Tuple[Dict[str, Any], int, Dict[str, Any]]
-
-
-def get_thing(thing_id: int) -> Response:
+def get_thing(thing_id: int) -> ResponseData:
     """
-    Retrieve a thing from the Things service.
+    Retrieve a thing.
 
     Parameters
     ----------
     thing_id : int
         The unique identifier for the thing in question.
-
     Returns
     -------
-    dict
+    io.BytesIO
         Some interesting information about the thing.
     int
         An HTTP status code.
     dict
         Some extra headers to add to the response.
+
     """
-    response_data: Dict[str, Any]
+    logger.debug('Request to get a thing: %s', thing_id)
     try:
-        thing: Optional[Thing] = things.get_a_thing(thing_id)
-    except IOError:
-        raise InternalServerError(THING_WONT_COME)
-
-    if thing is None:
-        raise NotFound(NO_SUCH_THING)
-
-    status_code = status.HTTP_200_OK
-    response_data = {
-        'id': thing.id,
-        'name': thing.name,
-        'created': thing.created
-    }
-    return response_data, status_code, {}
+        thing = things.get_a_thing(thing_id)
+    except things.NoSuchThing as e:
+        logger.debug('No such thing: %s', e)
+        raise NotFound(NO_SUCH_THING) from e
+    except IOError as e:
+        logger.debug('Encountered IOError: %s', e)
+        raise InternalServerError(THING_WONT_COME) from e
+    logger.debug('Got the thing: %s', thing)
+    return io.BytesIO(thing.name.encode('utf-8')), HTTPStatus.OK, {}
 
 
-def create_a_thing(thing_data: dict) -> Response:
+def create_a_thing(thing_data: dict) -> ResponseData:
     """
     Create a new :class:`.Thing`.
 
@@ -70,7 +71,6 @@ def create_a_thing(thing_data: dict) -> Response:
     ----------
     thing_data : dict
         Data used to create a new :class:`.Thing`.
-
     Returns
     -------
     dict
@@ -79,33 +79,33 @@ def create_a_thing(thing_data: dict) -> Response:
         An HTTP status code.
     dict
         Some extra headers to add to the response.
+
     """
     name = thing_data.get('name')
-    headers = {}
     response_data: Dict[str, Any]
     if not name or not isinstance(name, str):
         raise BadRequest(MISSING_NAME)
 
-    thing = Thing(name=name, created=datetime.now())      # type: ignore
+    thing = Thing(name=name, created=datetime.now())
     try:
         things.store_a_thing(thing)
     except RuntimeError as e:
-        raise InternalServerError(CANT_CREATE_THING)
+        raise InternalServerError(CANT_CREATE_THING) from e
+    
+    if not thing.is_persisted:
+        raise InternalServerError('Thing not persisted')
 
-    status_code = status.HTTP_201_CREATED
-    thing_url = url_for('external_api.read_thing',  # type: ignore
-                        thing_id=thing.id)
+    thing_url = url_for('external_api.read_thing', thing_id=thing.id)
     response_data = {
         'id': thing.id,
         'name': thing.name,
         'created': thing.created,
         'url': thing_url
     }
-    headers['Location'] = thing_url
-    return response_data, status_code, headers
+    return response_data, HTTPStatus.CREATED, {'Location': thing_url}
 
 
-def start_mutating_a_thing(thing_id: int) -> Response:
+def start_mutating_a_thing(thing_id: int) -> ResponseData:
     """
     Start mutating a :class:`.Thing`.
 
@@ -121,14 +121,14 @@ def start_mutating_a_thing(thing_id: int) -> Response:
         An HTTP status code.
     dict
         Some extra headers to add to the response.
+
     """
     result = mutate_a_thing.delay(thing_id)
-    headers = {'Location': url_for('external_api.mutation_status',
-                                   task_id=result.task_id)}
-    return {'reason': ACCEPTED}, status.HTTP_202_ACCEPTED, headers
+    stat_url = url_for('external_api.mutation_status', task_id=result.task_id)
+    return {'reason': ACCEPTED}, HTTPStatus.ACCEPTED, {'Location': stat_url}
 
 
-def mutation_status(task_id: str) -> Response:
+def mutation_status(task_id: str) -> ResponseData:
     """
     Check the status of a mutation process.
 
@@ -145,23 +145,32 @@ def mutation_status(task_id: str) -> Response:
         An HTTP status code.
     dict
         Some extra headers to add to the response.
+
     """
     try:
-        task_status, result = check_mutation_status(task_id)
+        task = check_mutation_status(task_id)
     except ValueError as e:
-        raise BadRequest(INVALID_TASK_ID)
-    if task_status == 'PENDING':
-        raise NotFound(TASK_DOES_NOT_EXIST)
-    elif task_status in ['SENT', 'STARTED', 'RETRY']:
-        return TASK_IN_PROGRESS, status.HTTP_200_OK, {}
-    elif task_status == 'FAILURE':
+        raise BadRequest(INVALID_TASK_ID) from e
+    except NoSuchTask as e:
+        raise NotFound(TASK_DOES_NOT_EXIST) from e
+    
+    status_code = HTTPStatus.OK
+
+    headers: Dict[str, Any] = {}
+    logger.debug('task status is %s', task.status)
+    if task.is_in_progress:
+        logger.debug('task is in progress')
+        reason = TASK_IN_PROGRESS
+    elif task.is_failed:
+        logger.debug('task has failed')
         reason = TASK_FAILED
-        reason.update({'reason': str(result)})
-        return reason, status.HTTP_200_OK, {}
-    elif task_status == 'SUCCESS':
+        reason.update({'reason': str(task.result)})    
+    elif task.is_complete:
+        logger.debug('task is complete')
         reason = TASK_COMPLETE
-        reason.update({'result': result})
-        headers = {'Location': url_for('external_api.read_thing',
-                                       thing_id=result['thing_id'])}
-        return TASK_COMPLETE, status.HTTP_303_SEE_OTHER, headers
-    raise NotFound(TASK_DOES_NOT_EXIST)
+        reason.update({'result': task.result})
+        thing_url = url_for('external_api.read_thing', 
+                            thing_id=task.result['thing_id'])
+        headers.update({'Location': thing_url})
+        status_code = HTTPStatus.SEE_OTHER
+    return reason, status_code, headers

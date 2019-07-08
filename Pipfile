@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-celery = "*"
+celery = "==4.1.0"
 flask-sqlalchemy = "*"
 jsonschema = "*"
 pyjwt = "*"
@@ -15,8 +15,11 @@ uwsgi = "*"
 "nose2" = "*"
 dataclasses = "*"
 mypy = "*"
-flask = "*"
-arxiv-base = "*"
+flask = "==1.0.3"
+arxiv-base = "==0.15.9"
+typing-extensions = "*"
+arxiv-auth = "==0.3.4rc1"
+kombu = "==4.0.2"
 
 [dev-packages]
 coverage = "*"

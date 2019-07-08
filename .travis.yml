@@ -8,10 +8,11 @@ os:
 python:
   - "3.6"
 script:
-  - pip install pipenv
+  - pip install -U pip pipenv
   - pipenv install --dev
-  - ./lintstats.sh
-  - ./tests/docker_tests.sh
-  - pipenv run nose2
+  - pipenv run nose2 --with-coverage --coverage-report=term-missing
 after_success:
   - coveralls
+  - "./tests/lint.sh funding"
+  - "./tests/style.sh funding"
+  - "./tests/type-check.sh funding"

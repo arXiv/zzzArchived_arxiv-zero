@@ -27,8 +27,17 @@ See :func:`handle_bad_request`.
 from flask import Blueprint, render_template, url_for, Response, make_response
 from werkzeug.exceptions import BadRequest, NotFound, Unauthorized, Forbidden
 from arxiv import status
-from zero import authorization
-from zero.controllers import baz, things
+
+from arxiv.users.domain import Scope
+from arxiv.users.auth.decorators import scoped
+
+from .. import controllers
+
+# Normally these would be defined in the ``arxiv.users`` package, so that we
+# can explicitly grant them when an authenticated session is created. These 
+# are defined here for demonstration purposes only.
+READ_THING = Scope('thing', Scope.actions.READ)
+WRITE_THING = Scope('thing', Scope.actions.UPDATE)
 
 blueprint = Blueprint('ui', __name__, url_prefix='/zero/ui')
 
@@ -36,16 +45,16 @@ blueprint = Blueprint('ui', __name__, url_prefix='/zero/ui')
 @blueprint.route('/baz/<int:baz_id>', methods=['GET'])
 def read_baz(baz_id: int) -> tuple:
     """Provide some data about the baz."""
-    data, status_code, headers = baz.get_baz(baz_id)
+    data, status_code, headers = controllers.get_baz(baz_id)
     response = render_template("zero/baz.html", **data)
     return response, status_code, headers
 
 
 @blueprint.route('/thing/<int:thing_id>', methods=['GET'])
-@authorization.scoped('read:thing')
+@scoped(READ_THING)
 def read_thing(thing_id: int) -> tuple:
     """Provide some data about the thing."""
-    data, status_code, headers = things.get_thing(thing_id)
+    data, status_code, headers = controllers.get_thing(thing_id)
     response = render_template("zero/thing.html", **data)
     return response, status_code, headers
 

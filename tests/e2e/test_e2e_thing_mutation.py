@@ -1,20 +1,17 @@
 """An authorized client can create and mutate a :class:`.Thing`."""
 
-from unittest import TestCase, mock
+import threading
 import json
 import tempfile
 import shutil
 import os
-import jwt
 import time
+from unittest import TestCase, mock
 from urllib import parse
-import threading
+from http import HTTPStatus
 
-
-def generate_token(app: object, claims: dict) -> bytes:
-    """Helper function for generating a JWT."""
-    secret = app.config.get('JWT_SECRET') # type: ignore
-    return jwt.encode(claims, secret, algorithm='HS256')
+from arxiv.users.helpers import generate_token
+from zero.routes.external_api import READ_THING, WRITE_THING
 
 
 class TestCreateAndMutate(TestCase):
@@ -27,19 +24,21 @@ class TestCreateAndMutate(TestCase):
 
     def setUp(self) -> None:
         """Initialize in-memory queue, on-disk database, and test client."""
-        from zero.factory import create_web_app, celery_app
+        os.environ['JWT_SECRET'] = 'foosecret'
+        from zero.factory import create_web_app, celery_app, create_api_app
 
         # Initialize the web application with an on-disk test database.
-        self.app = create_web_app()
+        self.app = create_api_app()
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+        
         self.client = self.app.test_client()
 
         # Use the ``things`` service as a convenient hook into the DB.
         from zero.services import things
         self.things = things
-        self.things.db.init_app(self.app) # type: ignore
-        self.things.db.app = self.app # type: ignore
-        self.things.db.create_all() # type: ignore
+        self.things.init_app(self.app)
+        with self.app.app_context():
+            self.things.create_all()
 
         # Use an in-memory queue, and an on-disk SQLite DB for results.
         celery_app.conf.broker_url = 'memory://localhost/'
@@ -52,7 +51,8 @@ class TestCreateAndMutate(TestCase):
         # Start a worker in a separate thread.
         def run_worker() -> None:
             """Wrap :func:`Celery.worker_main` for multithreading."""
-            celery_app.worker_main()
+            with self.app.app_context():
+                celery_app.worker_main(['--loglevel=DEBUG', '-E'])
 
         t = threading.Thread(target=run_worker)
         t.daemon = True
@@ -60,14 +60,15 @@ class TestCreateAndMutate(TestCase):
 
     def tearDown(self) -> None:
         """Clear the database and tear down all tables, clean up filesystem."""
-        self.things.db.session.remove() # type: ignore
-        self.things.db.drop_all() # type: ignore
+        with self.app.app_context():
+            self.things.db.session.remove() # type: ignore
+            self.things.db.drop_all() # type: ignore
         shutil.rmtree(self.temppath)
 
     def test_create_a_thing_and_mutate_it(self) -> None:
         """Create and mutate a thing via the API."""
-        token = generate_token(self.app,
-                               {'scope': ['read:thing', 'write:thing']})
+        token = generate_token('1234', 'foo@user.com', 'foouser', 
+                               scope=[READ_THING, WRITE_THING])
         thing_data = {'name': 'The Thing'}
 
         # Create the thing:
@@ -84,7 +85,8 @@ class TestCreateAndMutate(TestCase):
                                     headers={'Authorization': token},
                                     content_type='application/json')
 
-        self.assertEqual(response.status_code, 201, "Created")
+        self.assertEqual(response.status_code, HTTPStatus.CREATED, "Created")
+        
         response_data = json.loads(response.data)
         self.assertEqual(response_data['name'], thing_data['name'])
         self.assertIn('created', response_data)
@@ -101,12 +103,7 @@ class TestCreateAndMutate(TestCase):
         #    | <--- 200 w/ data --  |
         get_response = self.client.get(response_data['url'],
                                        headers={'Authorization': token})
-
-        get_response_data = json.loads(get_response.data)
-        self.assertEqual(response_data['name'], get_response_data['name'])
-        self.assertEqual(response_data['id'], get_response_data['id'])
-        self.assertEqual(response_data['created'],
-                         get_response_data['created'])
+        self.assertEqual(get_response.data, b'The Thing')
 
         # Mutate the thing:
         #
@@ -121,7 +118,8 @@ class TestCreateAndMutate(TestCase):
                                            data=json.dumps({}),
                                            headers={'Authorization': token},
                                            content_type='application/json')
-        self.assertEqual(mutate_response.status_code, 202, "Accepted")
+        self.assertEqual(mutate_response.status_code, HTTPStatus.ACCEPTED, 
+                         "Accepted")
 
         # Get mutation task status (not yet complete):
         #
@@ -133,7 +131,7 @@ class TestCreateAndMutate(TestCase):
         status_path = parse.urlparse(mutate_response.headers['Location']).path
         status_response = self.client.get(status_path,
                                           headers={'Authorization': token})
-        self.assertEqual(status_response.status_code, 200,
+        self.assertEqual(status_response.status_code, HTTPStatus.OK,
                          "Status resource found")
 
         # Meanwhile, worker process gets task and executes:
@@ -161,13 +159,14 @@ class TestCreateAndMutate(TestCase):
         #   Location: /thing/<id>
         status_response = self.client.get(status_path,
                                           headers={'Authorization': token})
-        self.assertEqual(status_response.status_code, 303, "See other")
+        self.assertEqual(status_response.status_code, HTTPStatus.SEE_OTHER, 
+                         "See other")
         status_response_data = json.loads(status_response.data)
 
         self.assertIn("result", status_response_data)
         self.assertIn("status", status_response_data)
         self.assertIn("location", status_response.headers)
-        N_chars = status_response_data['result']['result']
+        N_ones = status_response_data['result']['result'] - 9
 
         # Get the thing one last time:
         #
@@ -181,9 +180,10 @@ class TestCreateAndMutate(TestCase):
             parse.urlparse(status_response.headers['Location']).path,
             headers={'Authorization': token}
         )
-        self.assertEqual(final_response.status_code, 200, "OK")
-        final_response_data = json.loads(final_response.data)
-        self.assertIn('id', final_response_data)
-        self.assertIn('name', final_response_data)
-        self.assertIn('created', final_response_data)
-        self.assertEqual(N_chars, len(final_response_data['name']))
+        self.assertEqual(final_response.status_code, HTTPStatus.OK, "OK")
+        self.assertEqual(final_response.data, b'The Thing' + b'1' * N_ones)
+        # final_response_data = json.loads()
+        # self.assertIn('id', final_response_data)
+        # self.assertIn('name', final_response_data)
+        # self.assertIn('created', final_response_data)
+        # self.assertEqual(N_chars, len(final_response_data['name']))

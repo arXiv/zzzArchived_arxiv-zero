@@ -1,7 +1,7 @@
-zero.authorization module
+zero.domain.things module
 =========================
 
-.. automodule:: zero.authorization
+.. automodule:: zero.domain.things
     :members:
     :undoc-members:
     :show-inheritance:
